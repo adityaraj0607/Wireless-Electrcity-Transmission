@@ -1,0 +1,890 @@
+       <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="WETA Grid Dispatch Terminal — Mission Control Center for Wireless Electricity Transmission."/>
+  <meta name="theme-color" content="#030508"/>
+  <title>WETA National Grid Control Center</title>
+  
+  <!-- Premium HUD Display Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+  
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  
+  <!-- CRT Raster Scanlines Layer -->
+  <div class="crt-overlay"></div>
+
+  <!-- Primary Shell -->
+  <div id="ui-shell">
+
+    <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+    <main class="main-container">
+      
+      <!-- ==================== TOP COMMAND BAR (Compact Mission Control) ==================== -->
+      <header class="cmd-bar">
+        <div class="cmd-bar__brand">
+          <div class="cmd-logo">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#00FFF0" stroke="#00FFF0" stroke-width="1"/></svg>
+          </div>
+          <div class="cmd-titles">
+            <span class="cmd-name font-orbitron">NATIONAL GRID</span>
+            <span class="cmd-sub font-space">CONTROL CENTER</span>
+          </div>
+        </div>
+
+        <div class="cmd-bar__metrics font-space">
+          <div class="cmd-metric">
+            <span class="cm-lbl">SYSTEM STATUS</span>
+            <strong class="cm-val text-green" id="v-conn">ONLINE</strong>
+          </div>
+          <div class="cmd-metric-sep"></div>
+          <div class="cmd-metric">
+            <span class="cm-lbl">AES-256 ENCRYPTION</span>
+            <strong class="cm-val text-cyan" id="v-auth">ACTIVE</strong>
+          </div>
+          <div class="cmd-metric-sep"></div>
+          <div class="cmd-metric">
+            <span class="cm-lbl">CONNECTED NODES</span>
+            <strong class="cm-val"><span class="text-white">32</span> <span class="cm-trend text-green">+4 today</span></strong>
+          </div>
+          <div class="cmd-metric-sep"></div>
+          <div class="cmd-metric">
+            <span class="cm-lbl">ACTIVE CONSUMERS</span>
+            <strong class="cm-val"><span class="text-white">18</span> <span class="cm-trend text-green">+2 today</span></strong>
+          </div>
+          <div class="cmd-metric-sep"></div>
+          <div class="cmd-metric">
+            <span class="cm-lbl">POWER TRANSFER</span>
+            <strong class="cm-val text-cyan" id="pwr-wattage">15.42 MW</strong>
+          </div>
+        </div>
+
+        <div class="cmd-bar__right font-space">
+          <div class="cmd-datetime">
+            <span class="cmd-date" id="cmd-date">07 JUNE 2026</span>
+            <span class="cmd-time font-jetbrains" id="header-time">17:42:36 IST</span>
+          </div>
+          <div class="cmd-metric-sep"></div>
+          <div class="cmd-operator">
+            <div class="cmd-op-info">
+              <span class="cmd-op-label">GRID OPERATOR</span>
+              <span class="cmd-op-name">Administrator</span>
+            </div>
+            <div class="cmd-avatar font-space">AR</div>
+          </div>
+          <!-- Hidden but preserved for JS refs -->
+          <div style="display:none;">
+            <div id="ws-badge"><span id="ws-dot"></span><span id="ws-label">CONNECTING</span></div>
+            <span id="header-status"><span id="status-dot"></span><span id="status-label">ONLINE</span></span>
+            <button id="btn-settings"></button>
+          </div>
+        </div>
+      </header>
+
+      <!-- ==================== KPI METRIC STRIP ==================== -->
+      <div class="kpi-strip font-space">
+        <div class="kpi-chip">
+          <div class="kpi-chip__icon bg-green-glow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00ff88" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <div class="kpi-chip__body">
+            <span class="kpi-chip__label">TOTAL POWER AVAILABLE</span>
+            <div class="kpi-chip__row"><strong class="kpi-chip__val font-orbitron">25.80 MW</strong><span class="kpi-chip__trend text-green">+12.8%</span></div>
+            <span class="kpi-chip__sub">Available Capacity</span>
+          </div>
+        </div>
+        <div class="kpi-chip">
+          <div class="kpi-chip__icon bg-cyan-glow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00d9ff" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <div class="kpi-chip__body">
+            <span class="kpi-chip__label">TRANSMISSION CAPACITY</span>
+            <div class="kpi-chip__row"><strong class="kpi-chip__val font-orbitron">78.4%</strong></div>
+            <span class="kpi-chip__sub">High Utilization</span>
+          </div>
+        </div>
+        <div class="kpi-chip">
+          <div class="kpi-chip__icon bg-purple-glow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#a855f7" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/><line x1="2" y1="12" x2="22" y2="12"/></svg></div>
+          <div class="kpi-chip__body">
+            <span class="kpi-chip__label">ACTIVE SESSIONS</span>
+            <div class="kpi-chip__row"><strong class="kpi-chip__val font-orbitron">12</strong></div>
+            <span class="kpi-chip__sub">Live Transmission</span>
+          </div>
+        </div>
+        <div class="kpi-chip">
+          <div class="kpi-chip__icon bg-green-glow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00ff88" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="kpi-chip__body">
+            <span class="kpi-chip__label">RELAY HEALTH</span>
+            <div class="kpi-chip__row"><strong class="kpi-chip__val font-orbitron">98.7%</strong></div>
+            <span class="kpi-chip__sub">All Systems Normal</span>
+          </div>
+        </div>
+        <div class="kpi-chip">
+          <div class="kpi-chip__icon bg-cyan-glow"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00fff0" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <div class="kpi-chip__body">
+            <span class="kpi-chip__label">SUCCESS RATE</span>
+            <div class="kpi-chip__row"><strong class="kpi-chip__val font-orbitron">99.3%</strong></div>
+            <span class="kpi-chip__sub">Last 24 Hours</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== THREE-COLUMN OPS LAYOUT ==================== -->
+      <div class="ops-layout">
+
+        <!-- LEFT NAV COLUMN -->
+        <aside class="ops-nav">
+          <div class="onav-cat font-space">COMMAND</div>
+          <a href="#" class="onav-item active font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Grid Operations</a>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>Transmission Sessions</a>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Node Control</a>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="21" y1="12" x2="3" y2="12"/></svg>Relay Control</a>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Power Routing</a>
+          <div class="onav-cat font-space">MONITORING</div>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Telemetry</a>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>Analytics</a>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>Digital Twin</a>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Consumers</a>
+          <div class="onav-cat font-space">SECURITY</div>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/></svg>Encryption</a>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Audit Logs</a>
+          <a href="#" class="onav-item font-space"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>Alerts</a>
+        </aside>
+
+        <!-- CENTER: 3D TOPOLOGY VIEWPORT -->
+        <section class="ops-center card card--topology">
+          <!-- Topology Header -->
+          <div class="topo-header">
+            <div class="topo-header__left">
+              <span class="topo-title font-space">GRID NETWORK TOPOLOGY</span>
+              <span class="topo-live font-jetbrains">● LIVE</span>
+            </div>
+            <div class="topo-header__right">
+              <button class="topo-btn topo-btn--active font-space" id="btn-3d-view"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>3D VIEW</button>
+              <button class="topo-btn font-space" id="btn-map-view"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/></svg>MAP VIEW</button>
+            </div>
+          </div>
+
+        <!-- Hidden JS-ref elements preserved from old hero/KPI sections -->
+        <div style="display:none;">
+          <span id="pwr-wattage-kpi">0 W</span>
+          <span id="pwr-wattage-plant">0 W</span>
+          <span id="plant-load-dial"></span>
+          <span id="plant-percent-txt">0%</span>
+          <span id="d-conn">System Interconnect: ACTIVE</span>
+          <span id="v-relay-ch1">CLOSED</span><span id="d-relay-ch1">Channel 1 Idle</span>
+          <span id="v-relay-ch2">CLOSED</span><span id="d-relay-ch2">Channel 2 Idle</span>
+          <span id="d-req">No pending grid actions</span>
+          <span id="d-auth">Secure Shield Ready</span>
+          <span id="sidebar-settings-trigger"></span>
+        </div>
+
+        </section>
+
+        <section class="grid-col-8 card card--topology">
+          <div class="card__header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.08); padding-bottom: 12px; margin-bottom: 14px;">
+            <div class="card__header-left" style="display: flex; align-items: center; gap: 8px;">
+              <span class="card__title font-space" style="font-size: 0.82rem; font-weight: 700; letter-spacing: 0.8px; color: #ffffff; text-transform: uppercase;">GRID NETWORK TOPOLOGY</span>
+              <span class="live-badge font-jetbrains" style="background: rgba(0, 255, 136, 0.08); border: 1px solid rgba(0, 255, 136, 0.3); color: #00ff88; padding: 2px 7px; font-size: 0.58rem; border-radius: 3px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 3px; height: 16px; line-height: 1;">● LIVE</span>
+            </div>
+            <div class="card__header-right" style="display: flex; gap: 8px; align-items: center;">
+              <button class="control-btn font-space" id="btn-3d-view" style="display: flex; align-items: center; gap: 4px; padding: 5px 11px; font-size: 0.62rem; font-weight: 700; color: #00f0ff; background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.35); border-radius: 4px; cursor: pointer; transition: all 0.2s ease;">
+                <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                3D VIEW
+              </button>
+              <button class="control-btn font-space" id="btn-map-view" style="display: flex; align-items: center; gap: 4px; padding: 5px 11px; font-size: 0.62rem; font-weight: 600; color: #7f8a9e; background: transparent; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 4px; cursor: pointer; transition: all 0.2s ease;">
+                <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                MAP VIEW
+              </button>
+            </div>
+          </div>
+          
+          <div class="topology-area" style="position: relative; overflow: hidden; height: 500px;">
+            <!-- Three.js Canvas -->
+            <canvas id="three-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+            
+            <!-- Floating Zoom Sidebar Controls (Left Side) -->
+            <div class="map-zoom-controls">
+              <button class="zoom-btn" id="zoom-in" title="Zoom In">+</button>
+              <button class="zoom-btn" id="zoom-out" title="Zoom Out">−</button>
+              <button class="zoom-btn" id="zoom-reset" title="Recenter Camera">
+                <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" style="display: block; margin: 0 auto;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+
+            <!-- Floating HTML Node Labels positioned via projection -->
+            <div class="node-label-overlay font-space" id="lbl-Grid A">
+              <div class="nl-name">GRID NODE A</div>
+              <div class="nl-sub font-jetbrains">500 kV</div>
+              <div class="nl-status text-green">ONLINE</div>
+            </div>
+            <div class="node-label-overlay font-space" id="lbl-Grid B">
+              <div class="nl-name">GRID NODE B</div>
+              <div class="nl-sub font-jetbrains">500 kV</div>
+              <div class="nl-status text-green">ONLINE</div>
+            </div>
+            <div class="node-label-overlay font-space id-plant" id="lbl-Plant">
+              <div class="nl-name" style="color: #ffb020;">POWER PLANT</div>
+            </div>
+            <div class="node-label-overlay font-space" id="lbl-Relay 1">
+              <div class="nl-name">RELAY GATE 1</div>
+              <div class="nl-sub font-jetbrains">CHANNEL 1</div>
+              <div class="nl-status text-amber" id="lbl-status-relay1">STANDBY</div>
+            </div>
+            <div class="node-label-overlay font-space" id="lbl-Relay 2">
+              <div class="nl-name">RELAY GATE 2</div>
+              <div class="nl-sub font-jetbrains">CHANNEL 2</div>
+              <div class="nl-status text-amber" id="lbl-status-relay2">STANDBY</div>
+            </div>
+            <div class="node-label-overlay font-space" id="lbl-Home 101">
+              <div class="nl-name">HOME NODE 101</div>
+              <div class="nl-sub font-jetbrains">CONSUMER</div>
+              <div class="nl-status text-green">ONLINE</div>
+            </div>
+            <div class="node-label-overlay font-space" id="lbl-Home 117">
+              <div class="nl-name">HOME NODE 117</div>
+              <div class="nl-sub font-jetbrains">CONSUMER</div>
+              <div class="nl-status text-green">ONLINE</div>
+            </div>
+            <div class="node-label-overlay font-space" id="lbl-Home 203">
+              <div class="nl-name">HOME NODE 203</div>
+              <div class="nl-sub font-jetbrains">CONSUMER</div>
+              <div class="nl-status text-green">ONLINE</div>
+            </div>
+
+            <!-- Floating Legend Overlay (Bottom Center) -->
+            <div class="topology-legend font-space">
+              <div class="legend-item"><span class="legend-dot dot-power"></span>POWER FLOW</div>
+              <div class="legend-item"><span class="legend-dot dot-ch1"></span>CHANNEL 1</div>
+              <div class="legend-item"><span class="legend-dot dot-ch2"></span>CHANNEL 2</div>
+              <div class="legend-item"><span class="legend-dot dot-idle"></span>IDLE</div>
+            </div>
+
+            <!-- Floating Node info card -->
+            <div class="floating-telemetry" id="node-info-card">
+              <div class="ft-header">
+                <span class="ft-title font-space" id="info-node-name">NODE TELEMETRY</span>
+                <button class="ft-close" id="btn-info-close">×</button>
+              </div>
+              <div class="ft-body font-jetbrains">
+                <div class="ft-row"><span>Status</span><span id="info-node-status" class="text-green">ONLINE</span></div>
+                <div class="ft-row"><span>Frequency</span><span id="info-node-freq">50.00 Hz</span></div>
+                <div class="ft-row"><span>Flux Peak</span><span id="info-node-flux">1.45 W/m²</span></div>
+                <div class="ft-row"><span>Target Load</span><span id="info-node-load">78%</span></div>
+              </div>
+            </div>
+            
+            <!-- Viewport telemetry info bar -->
+            <div class="viewport-strip" style="display: none;">
+              <span class="font-jetbrains" id="strip-fps">60 FPS</span>
+            </div>
+          </div>
+
+          <!-- Hidden variables to preserve JS references and prevent script crashes -->
+          <div style="display: none;">
+            <span id="ch1-label">
+              <span class="viewport__ch-dot"></span>
+              <span id="ch1-state">IDLE</span>
+            </span>
+            <span id="ch2-label">
+              <span class="viewport__ch-dot"></span>
+              <span id="ch2-state">IDLE</span>
+            </span>
+          </div>
+        </section>
+
+        <!-- ==================== LIVE TELEMETRY PANEL (Spans 4 Columns) ==================== -->
+        <section class="grid-col-4 card card--telemetry-list">
+          <div class="card__header">
+            <span class="card__title font-space">REAL-TIME TELEMETRY SENSORS</span>
+            <a href="#" class="view-all font-space">View Specs</a>
+          </div>
+          
+          <div class="telemetry-rows font-space">
+            <!-- Voltage -->
+            <div class="tel-row">
+              <div class="tel-name-container">
+                <div class="tel-icon icon-green"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                <span class="tel-name">Voltage</span>
+              </div>
+              <div class="tel-sparkline-container">
+                <svg id="wave-conn" viewBox="0 0 200 40"><path d="M 0 20 Q 25 10 50 20 T 100 20 T 150 20 T 200 20" fill="none" stroke="#00FF88" stroke-width="1.5"/></svg>
+              </div>
+              <span class="tel-value font-jetbrains" id="pwr-voltage">0.0V</span>
+            </div>
+            
+            <!-- Current -->
+            <div class="tel-row">
+              <div class="tel-name-container">
+                <div class="tel-icon icon-blue"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/></svg></div>
+                <span class="tel-name">Current</span>
+              </div>
+              <div class="tel-sparkline-container">
+                <svg id="wave-relay-ch1" viewBox="0 0 200 40"><path d="M 0 20 L 200 20" fill="none" stroke="#00D9FF" stroke-width="1.5"/></svg>
+              </div>
+              <span class="tel-value font-jetbrains" id="pwr-current">0.00A</span>
+            </div>
+            
+            <!-- Power -->
+            <div class="tel-row">
+              <div class="tel-name-container">
+                <div class="tel-icon icon-cyan"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg></div>
+                <span class="tel-name">Power</span>
+              </div>
+              <div class="tel-sparkline-container">
+                <svg id="wave-auth" viewBox="0 0 200 40"><path d="M 0 20 H 200" fill="none" stroke="#00FFF0" stroke-width="1.5"/></svg>
+              </div>
+              <span class="tel-value font-jetbrains" id="pwr-wattage-side">0 W</span>
+            </div>
+            
+            <!-- Frequency -->
+            <div class="tel-row">
+              <div class="tel-name-container">
+                <div class="tel-icon icon-purple"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></div>
+                <span class="tel-name">Frequency</span>
+              </div>
+              <div class="tel-sparkline-container">
+                <svg id="wave-relay-ch2" viewBox="0 0 200 40"><path d="M 0 20 L 200 20" fill="none" stroke="#A855F7" stroke-width="1.5"/></svg>
+              </div>
+              <span class="tel-value font-jetbrains">50.02 Hz</span>
+            </div>
+            
+            <!-- Power Factor -->
+            <div class="tel-row">
+              <div class="tel-name-container">
+                <div class="tel-icon icon-amber"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12A10 10 0 1 1 12 2v10z"/></svg></div>
+                <span class="tel-name">Power Factor</span>
+              </div>
+              <div class="tel-sparkline-container">
+                <svg id="wave-req" viewBox="0 0 200 40"><path d="M 0 20 H 200" fill="none" stroke="#FFB020" stroke-width="1.5"/></svg>
+              </div>
+              <span class="tel-value font-jetbrains">0.98</span>
+            </div>
+            
+            <!-- Temperature -->
+            <div class="tel-row">
+              <div class="tel-name-container">
+                <div class="tel-icon icon-red"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></div>
+                <span class="tel-name">Temperature</span>
+              </div>
+              <div class="tel-sparkline-container">
+                <svg viewBox="0 0 200 40"><path d="M 0 20 Q 25 15 50 25 T 100 20 T 150 22 T 200 20" fill="none" stroke="#FF4D4D" stroke-width="1.5"/></svg>
+              </div>
+              <span class="tel-value font-jetbrains">32.4 °C</span>
+            </div>
+            
+            <!-- Grid Efficiency -->
+            <div class="tel-row">
+              <div class="tel-name-container">
+                <div class="tel-icon icon-cyan"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6a6 6 0 1 1-6 6"/></svg></div>
+                <span class="tel-name">Efficiency</span>
+              </div>
+              <div class="tel-sparkline-container">
+                <svg viewBox="0 0 200 40"><path d="M 0 20 H 200" fill="none" stroke="#00FFF0" stroke-width="1.2"/></svg>
+              </div>
+              <span class="tel-value font-jetbrains">96.8%</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TRANSMISSION SESSION CENTER (Spans 8 Columns) ==================== -->
+        <section class="grid-col-8 card table-section">
+          <div class="card__header">
+            <span class="card__title font-space">TRANSMISSION SESSIONS DATA CENTER</span>
+            <span class="card-count font-jetbrains">2 Active Corridors Assigned</span>
+          </div>
+          <div class="table-container font-space">
+            <table class="session-table">
+              <thead>
+                <tr>
+                  <th>Session ID</th>
+                  <th>Consumer ID</th>
+                  <th>Assigned Channel</th>
+                  <th>Power Rate</th>
+                  <th>Status</th>
+                  <th>Duration</th>
+                  <th>Encryption</th>
+                  <th>Relay State</th>
+                  <th>Auth State</th>
+                  <th>Health</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody class="font-jetbrains">
+                <tr>
+                  <td class="text-cyan">SES-8921</td>
+                  <td>Home Node 117</td>
+                  <td>Channel 1</td>
+                  <td id="pwr-wattage-table">557 W</td>
+                  <td><span class="t-badge text-green bg-green-soft">ACTIVE</span></td>
+                  <td id="session-dur">02:44:12</td>
+                  <td class="text-cyan">AES-256</td>
+                  <td>CLOSED</td>
+                  <td class="text-green">VERIFIED</td>
+                  <td class="text-green">99%</td>
+                  <td><button class="btn btn--sm btn--danger" id="session-term-btn">TERMINATE</button></td>
+                </tr>
+                <tr>
+                  <td class="text-purple">SES-9012</td>
+                  <td>Home Node 203</td>
+                  <td>Channel 2</td>
+                  <td>0 W</td>
+                  <td><span class="t-badge text-dim bg-dim-soft">STANDBY</span></td>
+                  <td>00:00:00</td>
+                  <td class="text-purple">AES-256</td>
+                  <td>OPEN</td>
+                  <td class="text-amber">PENDING</td>
+                  <td class="text-dim">98%</td>
+                  <td><button class="btn btn--sm">ROUTE</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==================== LIVE TRANSMISSION CORRIDORS (Spans 4 Columns) ==================== -->
+        <section class="grid-col-4 card routing-panel">
+          <div class="card__header font-space">
+            <span class="card__title">LIVE TRANSMISSION CORRIDORS</span>
+          </div>
+          <div class="routing-body font-space">
+            
+            <!-- Channel 1 Card Detail -->
+            <div class="corridor-card" id="corridor-ch1">
+              <div class="corr-header">
+                <span class="name text-cyan">CHANNEL 1 CORRIDOR</span>
+                <span class="badge badge--green font-jetbrains" id="ch1-status-badge">ACTIVE</span>
+              </div>
+              <div class="progress-container"><div class="progress-bar bg-cyan pulse-progress-bar" id="ch1-progress-bar" style="width: 37.1%"></div></div>
+              <div class="corr-stats font-jetbrains">
+                <div><span>Relay State</span><strong class="text-white">CLOSED</strong></div>
+                <div><span>Current Load</span><strong class="text-cyan" id="ch1-load-txt">557 W</strong></div>
+                <div><span>Telemetry</span><strong class="text-white" id="ch1-tel-txt">224V • 2.49A</strong></div>
+                <div><span>Consumer</span><strong class="text-white">Home Node 117</strong></div>
+                <div><span>Duration</span><strong class="text-white" id="ch1-dur-txt">02:44:12</strong></div>
+                <div><span>Efficiency</span><strong class="text-green">96.8%</strong></div>
+              </div>
+            </div>
+            
+            <!-- Channel 2 Card Detail -->
+            <div class="corridor-card" id="corridor-ch2">
+              <div class="corr-header">
+                <span class="name text-purple">CHANNEL 2 CORRIDOR</span>
+                <span class="badge badge--standby font-jetbrains" id="ch2-status-badge">STANDBY</span>
+              </div>
+              <div class="progress-container"><div class="progress-bar bg-purple" id="ch2-progress-bar" style="width: 0%"></div></div>
+              <div class="corr-stats font-jetbrains">
+                <div><span>Relay State</span><strong class="text-dim">OPEN</strong></div>
+                <div><span>Current Load</span><strong class="text-dim">0 W</strong></div>
+                <div><span>Telemetry</span><strong class="text-dim">0V • 0.00A</strong></div>
+                <div><span>Consumer</span><strong class="text-dim">None</strong></div>
+                <div><span>Duration</span><strong class="text-dim">00:00:00</strong></div>
+                <div><span>Efficiency</span><strong class="text-dim">98.4%</strong></div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==================== SECURITY OPERATIONS CENTER (Spans 4 Columns) ==================== -->
+        <section class="grid-col-4 card encryption-panel">
+          <div class="card__header font-space">
+            <span class="card__title text-cyan">SECURITY OPERATIONS CENTER (SOC)</span>
+          </div>
+          <div class="encryption-body font-space">
+            <div class="key-gen-widget font-jetbrains">
+              <div class="key-indicator">
+                <span class="pulse-dot bg-cyan"></span>
+                <span>AES-256 CYBER TUNNEL STATE: ESTABLISHED</span>
+              </div>
+              <div class="key-string font-jetbrains" id="soc-aes-key">f892a01bc89e3a7c6f091012ab99d21c</div>
+            </div>
+            
+            <div class="auth-checklist font-jetbrains">
+              <div class="checklist-item"><span class="text-green">✓</span> Dynamic Session Key Rotated</div>
+              <div class="checklist-item"><span class="text-green">✓</span> Dispatcher Node A Authenticated</div>
+              <div class="checklist-item" id="d-auth"><span class="text-green">✓</span> Consumer Handshake Approved</div>
+              <div class="checklist-item"><span class="text-green">✓</span> Secure AES corridor secured</div>
+              <div class="checklist-item"><span>Security Signature</span><strong class="text-cyan font-jetbrains" style="font-size:0.6rem">0x8a92b0c1ff</strong></div>
+              <div class="checklist-item"><span>Threat Level</span><strong class="text-green font-jetbrains">0.02% (MINIMAL)</strong></div>
+            </div>
+            
+            <!-- Command Actions Panel inside SOC -->
+            <div class="command-actions-panel" style="border-top:1px solid rgba(255, 255, 255, 0.04); padding-top:8px; margin-top:4px;">
+              <span class="sp-lbl font-space" style="font-size:0.6rem; color:#586069; display:block; margin-bottom:6px;">OPERATIONAL COMMAND DISPATCH</span>
+              <div class="cyber-action-grid">
+                <button class="btn btn--sm btn--accent" id="soc-btn-auth">AUTHORIZE</button>
+                <button class="btn btn--sm btn--outline" id="soc-btn-deny">REJECT</button>
+                <button class="btn btn--sm btn--outline" id="soc-btn-diag">DIAGNOSTICS</button>
+                <button class="btn btn--sm btn--danger" id="soc-btn-halt">SHUTDOWN</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== ALERTS CENTER & AI INTELLIGENCE (Spans 4 Columns) ==================== -->
+        <section class="grid-col-4 card alert-panel">
+          <div class="card__header font-space">
+            <span class="card__title text-amber">ALERTS &amp; GRID INTELLIGENCE</span>
+            <span class="badge warning-badge" id="v-req">0</span>
+          </div>
+          
+          <div class="alert-split-container font-space">
+            <!-- Grid Intelligence Panel -->
+            <div class="intel-panel">
+              <span class="intel-title font-space">AI DEMAND PREDICTION</span>
+              <div class="intel-stats font-jetbrains">
+                <div><span>Predicted Load</span><strong class="text-cyan">842 W</strong></div>
+                <div><span>Peak Demand Forecast</span><strong class="text-amber">1.2 kW</strong></div>
+                <div><span>Recommended Corridor</span><strong class="text-green">CH-1 (94% Conf)</strong></div>
+                <div><span>Failure Risk Score</span><strong class="text-green">1.2% (Minimal)</strong></div>
+              </div>
+            </div>
+            
+            <!-- Live Event Timeline Log -->
+            <div class="timeline-panel">
+              <span class="intel-title font-space">LIVE EVENT TIMELINE LOG</span>
+              <div class="timeline-log font-jetbrains" id="live-timeline-log">
+                <!-- Dynamically populated to never be empty -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== REAL OPERATIONAL DIGITAL TWIN (Spans 4 Columns) ==================== -->
+        <section class="grid-col-4 card twin-panel">
+          <div class="card__header font-space">
+            <span class="card__title">REAL-TIME OPERATIONAL DIGITAL TWIN</span>
+          </div>
+          <div class="twin-body font-space">
+            <div class="twin-params-grid font-jetbrains">
+              <div class="tp-item"><span>Power Plant</span><strong class="text-green">94.2 MW (Healthy)</strong></div>
+              <div class="tp-item"><span>Transformer</span><strong class="text-green">100% Cohesion</strong></div>
+              <div class="tp-item"><span>Grid Nodes</span><strong class="text-cyan">24 Online</strong></div>
+              <div class="tp-item"><span>Relay Gates</span><strong class="text-green">4 Gates Online</strong></div>
+              <div class="tp-item"><span>Home Nodes</span><strong class="text-cyan">1 Transmitting</strong></div>
+              <div class="tp-item"><span>Channel Allocation</span><strong class="text-green">CH-1 Active</strong></div>
+              <div class="tp-item"><span>Active Power Path</span><strong class="text-cyan">Secured Route</strong></div>
+              <div class="tp-item"><span>Resonance Stability</span><strong class="text-green">99.8%</strong></div>
+            </div>
+            
+            <!-- Simple Node tree diagram -->
+            <div class="twin-tree font-jetbrains" style="border-top:1px solid rgba(255, 255, 255, 0.02); padding-top:8px; margin-top:8px;">
+              <div class="tree-item parent">✦ PLANT -> GRID A -> RELAY 1 [ACTIVE]</div>
+              <div class="tree-item child text-cyan">↳ ⌂ HOME NODE 117 [TRANSMITTING 557W]</div>
+              <div class="tree-item parent">✦ PLANT -> GRID B -> RELAY 3 [STANDBY]</div>
+              <div class="tree-item child text-dim">↳ ⌂ HOME NODE 203 [READY]</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== DIAGNOSTIC CONSOLE LOGS (Spans 12 Columns) ==================== -->
+        <section class="grid-col-12 card console-section">
+          <div class="card__header">
+            <span class="card__title font-space">SYSTEM LOGS &amp; DIAGNOSTIC TERMINAL</span>
+            <div class="terminal-status font-jetbrains text-dim">LOG_LEVEL: DEBUG</div>
+          </div>
+          <div class="diagnostic-console font-jetbrains" id="terminal-body">
+            <!-- Populated by JS -->
+          </div>
+        </section>
+        
+      </div>
+
+      <!-- ==================== SYSTEM STATUS STRIP (FOOTER) ==================== -->
+      <footer class="footerbar">
+        <div class="footerbar__left font-space">
+          <span>GRID ONLINE: <strong class="text-green">99.98%</strong></span>
+          <span class="version-badge">Relays: CLOSED (1) / OPEN (3)</span>
+          <span class="version-badge">Active Homes: 1 / 200</span>
+          <span class="version-badge">Uptime: 24h 12m 44s</span>
+        </div>
+        <div class="footerbar__right font-space">
+          <span>Packet Rate: <strong class="text-green">144 p/s</strong> • Latency: <strong class="text-cyan">4.8ms</strong> • Security: <strong class="text-cyan">AES-256 Secured</strong> • Live FPS: <strong class="text-white" id="strip-fps">60 FPS</strong> • Count: <strong class="text-white">24 Nodes</strong> • Assigned Load: <strong class="text-white" id="footer-load-txt">557W</strong></span>
+        </div>
+      </footer>
+      
+    </main>
+
+  </div>
+
+  <!-- ==================== SETTINGS OVERLAY SIDE-PANEL ==================== -->
+  <div class="overlay-container" id="settings-overlay">
+    <div class="settings-panel" id="settings-panel">
+      <div class="sp-header">
+        <span class="sp-title font-orbitron">System Configuration</span>
+        <button class="sp-close" id="btn-settings-close">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sp-scroll-area">
+        <!-- Interconnect mode settings -->
+        <div class="sp-group">
+          <h4 class="font-space">Grid Interconnect Mode</h4>
+          <div class="sp-control">
+            <label for="set-mode" class="font-space">Target Mode</label>
+            <select class="cyber-select font-space" id="set-mode">
+              <option value="sim">Simulation Engine</option>
+              <option value="live">Live Hardware Grid</option>
+            </select>
+          </div>
+          <div class="sp-control" id="row-ip" style="display:none">
+            <label for="set-ip" class="font-space">Master URL</label>
+            <input class="cyber-input font-jetbrains" id="set-ip" type="text" placeholder="localhost:5000"/>
+          </div>
+        </div>
+
+        <!-- Override selectors -->
+        <div class="sp-group">
+          <h4 class="font-space">Manual Override Dispatch</h4>
+          <div class="sp-control">
+            <span class="sp-lbl font-space">Channel 1 Line</span>
+            <div class="toggle-group font-space">
+              <button class="btn btn--sm" id="set-ch1-on">ENGAGE</button>
+              <button class="btn btn--sm active" id="set-ch1-off">DISENGAGE</button>
+            </div>
+          </div>
+          <div class="sp-control">
+            <span class="sp-lbl font-space">Channel 2 Line</span>
+            <div class="toggle-group font-space">
+              <button class="btn btn--sm" id="set-ch2-on">ENGAGE</button>
+              <button class="btn btn--sm active" id="set-ch2-off">DISENGAGE</button>
+            </div>
+          </div>
+          <div class="sp-control">
+            <span class="sp-lbl font-space">Auto-Approve Requests</span>
+            <label class="switch-container">
+              <input type="checkbox" id="set-auto"/>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Simulation variables -->
+        <div class="sp-group">
+          <h4 class="font-space">Resonance Engine Physics</h4>
+          <div class="sp-control-range font-space">
+            <div class="range-labels">
+              <span>Flux Particles</span>
+              <strong id="set-particles-val">500</strong>
+            </div>
+            <input type="range" id="set-particles" min="100" max="1500" step="50" value="500"/>
+          </div>
+
+          <div class="sp-control-range font-space">
+            <div class="range-labels">
+              <span>Flux Velocity</span>
+              <strong id="set-speed-val">6</strong>
+            </div>
+            <input type="range" id="set-speed" min="1" max="25" step="1" value="6"/>
+          </div>
+
+          <div class="sp-control">
+            <span class="sp-lbl font-space">Spatial Stars</span>
+            <label class="switch-container">
+              <input type="checkbox" id="set-stars" checked/>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="sp-control">
+            <span class="sp-lbl font-space">Vector Field Grid</span>
+            <label class="switch-container">
+              <input type="checkbox" id="set-grid" checked/>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="sp-control">
+            <span class="sp-lbl font-space">Raster Scanlines</span>
+            <label class="switch-container">
+              <input type="checkbox" id="set-scanlines" checked/>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="sp-control">
+            <span class="sp-lbl font-space">Auditory Resonance</span>
+            <label class="switch-container">
+              <input type="checkbox" id="set-audio" checked/>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Emergency dispatchers -->
+        <div class="sp-group">
+          <h4 class="font-space">Grid Emergency Actions</h4>
+          <div class="sp-buttons font-space">
+            <button class="btn btn--outline btn--w100" id="set-sim-req">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+              </svg>
+              Simulate Handshake
+            </button>
+            <button class="btn btn--danger btn--w100" id="set-emergency">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              EMERGENCY HALT ALL
+            </button>
+            <button class="btn btn--outline btn--w100" id="set-reset">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2">
+                <path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+              </svg>
+              RESET PARAMETERS
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== HOLOGRAPHIC VERIFICATION MODAL ==================== -->
+  <div class="modal-overlay" id="modal-ov">
+    <div class="verification-card">
+      <div class="vc-tag font-space"><span class="tag-dot"></span>GRID SECURITY CHALLENGE</div>
+      <h2 class="font-space">Incoming Node Intercepted</h2>
+      <p class="font-space">A remote consumer node is attempting a secure energy handshake. Verify cryptographic OTP parameters to route active wireless current.</p>
+      
+      <div class="vc-details font-jetbrains">
+        <div class="vc-detail"><span class="lbl font-space">Source</span><strong id="m-src">Home Node B</strong></div>
+        <div class="vc-detail"><span class="lbl font-space">Protocol</span><strong id="m-proto">WETA-AES-V3</strong></div>
+        <div class="vc-detail"><span class="lbl font-space">Crypt</span><strong id="m-enc">AES-256-GCM</strong></div>
+        <div class="vc-detail"><span class="lbl font-space">Time</span><strong id="m-time">00:00:00</strong></div>
+      </div>
+
+      <div class="vc-decrypt font-space" id="dec-bar">
+        <div class="modal__dec-sp"></div>
+        <span id="dec-text">Decrypting AES-256 credentials...</span>
+      </div>
+
+      <div class="vc-otp font-orbitron">
+        <div class="vc-otp__lbl font-space">HANDSHAKE CODE</div>
+        <div class="vc-otp__code" id="otp-code">------</div>
+      </div>
+
+      <div class="vc-btns font-space">
+        <button class="btn btn--accent" id="btn-auth">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/>
+          </svg>
+          Authorize Corridor
+        </button>
+        <button class="btn btn--outline" id="btn-deny">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          Deny Request
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="script.js"></script>
+  
+  <!-- Inline binding to route Settings and mirror wattage metrics -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sbSettings = document.getElementById('sidebar-settings-trigger');
+      const realSettings = document.getElementById('btn-settings');
+      
+      const headerWattage = document.getElementById('pwr-wattage');
+      const kpiWattage = document.getElementById('pwr-wattage-kpi');
+      const plantWattage = document.getElementById('pwr-wattage-plant');
+      const tableWattage = document.getElementById('pwr-wattage-table');
+      const sideWattage = document.getElementById('ch1-load-txt');
+      const footerWattage = document.getElementById('footer-load-txt');
+
+      // Mirror header load changes in all metrics cards
+      if (headerWattage) {
+        const observer = new MutationObserver(() => {
+          const txt = headerWattage.textContent;
+          const num = parseFloat(txt) || 0;
+          if (kpiWattage) kpiWattage.textContent = txt;
+          if (plantWattage) plantWattage.textContent = txt;
+          if (tableWattage) tableWattage.textContent = txt;
+          if (sideWattage) sideWattage.textContent = txt;
+          if (footerWattage) footerWattage.textContent = txt;
+
+          // Animate the plant power utilization gauge
+          const plantDial = document.getElementById('plant-load-dial');
+          const percentTxt = document.getElementById('plant-percent-txt');
+          const progressBar = document.getElementById('ch1-progress-bar');
+          
+          if (num > 0) {
+            // max load is 1500W
+            const pct = Math.min((num / 1500) * 100, 100);
+            const offset = 263 - (263 * pct / 100);
+            if (plantDial) plantDial.style.strokeDashoffset = offset;
+            if (percentTxt) percentTxt.textContent = pct.toFixed(1) + '%';
+            if (progressBar) {
+              progressBar.style.width = pct.toFixed(1) + '%';
+              progressBar.classList.add('pulse-progress-bar');
+            }
+            // Channel 1 status badge active
+            const ch1Badge = document.getElementById('ch1-status-badge');
+            if (ch1Badge) {
+              ch1Badge.textContent = 'ACTIVE';
+              ch1Badge.className = 'badge badge--green font-jetbrains';
+            }
+            const ch1Tel = document.getElementById('ch1-tel-txt');
+            const headerV = document.getElementById('pwr-voltage').textContent;
+            const headerC = document.getElementById('pwr-current').textContent;
+            if (ch1Tel) ch1Tel.textContent = `${headerV} • ${headerC}`;
+          } else {
+            if (plantDial) plantDial.style.strokeDashoffset = 263;
+            if (percentTxt) percentTxt.textContent = '0.0%';
+            if (progressBar) {
+              progressBar.style.width = '0%';
+              progressBar.classList.remove('pulse-progress-bar');
+            }
+            const ch1Badge = document.getElementById('ch1-status-badge');
+            if (ch1Badge) {
+              ch1Badge.textContent = 'STANDBY';
+              ch1Badge.className = 'badge badge--standby font-jetbrains';
+            }
+            const ch1Tel = document.getElementById('ch1-tel-txt');
+            if (ch1Tel) ch1Tel.textContent = '0V • 0.00A';
+          }
+        });
+        observer.observe(headerWattage, { childList: true, characterData: true, subtree: true });
+      }
+      
+      if (sbSettings && realSettings) {
+        sbSettings.addEventListener('click', (e) => {
+          e.preventDefault();
+          realSettings.click();
+        });
+      }
+
+      // Operational Actions mappings
+      const socAuth = document.getElementById('soc-btn-auth');
+      const socDeny = document.getElementById('soc-btn-deny');
+      const socDiag = document.getElementById('soc-btn-diag');
+      const socHalt = document.getElementById('soc-btn-halt');
+      const realAuth = document.getElementById('btn-auth');
+      const realDeny = document.getElementById('btn-deny');
+      const simReq = document.getElementById('set-sim-req');
+      const simHalt = document.getElementById('set-emergency');
+
+      if (socAuth && realAuth) socAuth.addEventListener('click', () => realAuth.click());
+      if (socDeny && realDeny) socDeny.addEventListener('click', () => realDeny.click());
+      if (socDiag && simReq) socDiag.addEventListener('click', () => simReq.click());
+      if (socHalt && simHalt) socHalt.addEventListener('click', () => simHalt.click());
+
+      // Terminate button inside session table
+      const termBtn = document.getElementById('session-term-btn');
+      if (termBtn && simHalt) termBtn.addEventListener('click', () => simHalt.click());
+    });
+  </script>
+</body>
+</html>

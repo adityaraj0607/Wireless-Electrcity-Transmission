@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="WETA Home Receiver Terminal — Wireless Electricity Transmission Consumer Dashboard"/>
+  <title>WETA HOME RECEIVER — Wireless Power Terminal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- ═══ BOOT SPLASH SCREEN ═══ -->
+  <div class="boot-splash" id="boot-splash">
+    <div class="boot-content">
+      <div class="boot-ring">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" class="boot-ring__track"/>
+          <circle cx="60" cy="60" r="52" class="boot-ring__arc"/>
+        </svg>
+        <span class="boot-bolt">⚡</span>
+      </div>
+      <h2 class="boot-title">WETA HOME TERMINAL</h2>
+      <p class="boot-sub">Initializing Wireless Electricity Receiver Node B...</p>
+      <div class="boot-steps" id="boot-steps">
+        <div class="boot-step active" id="bs-1">▸ Loading cryptographic modules...</div>
+        <div class="boot-step" id="bs-2">▸ Establishing Socket.IO bridge...</div>
+        <div class="boot-step" id="bs-3">▸ Calibrating telemetry sensors...</div>
+        <div class="boot-step" id="bs-4">▸ System ready.</div>
+      </div>
+      <div class="boot-bar"><div class="boot-bar__fill" id="boot-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ NAVIGATION BAR ═══ -->
+  <nav class="topbar">
+    <div class="topbar__brand">
+      <div class="topbar__logo"><span class="bolt-icon">⚡</span></div>
+      <div class="topbar__text">
+        <span class="topbar__title">WETA Home Terminal</span>
+        <span class="topbar__sub">Wireless Electricity • Consumer Node B</span>
+      </div>
+    </div>
+
+    <div class="topbar__tabs">
+      <button class="tab-pill active" data-tab="dashboard">Dashboard</button>
+      <button class="tab-pill" data-tab="market">Marketplace</button>
+      <button class="tab-pill" data-tab="plantation">Eco-Plantation</button>
+    </div>
+
+    <div class="topbar__right">
+      <div class="conn-chip" id="conn-chip">
+        <span class="conn-dot" id="conn-dot"></span>
+        <span class="conn-label" id="conn-label">Connected</span>
+      </div>
+      <span class="clock-chip" id="clock-chip">00:00:00</span>
+      <button class="icon-btn" id="btn-settings" title="Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══ MAIN CONTENT AREA ═══ -->
+  <main class="main-wrap">
+
+    <!-- ── TAB: DASHBOARD ── -->
+    <section class="view active" id="view-dashboard">
+
+      <!-- ROW 1: Beam Visualisation + OTP Handshake -->
+      <div class="row row--top">
+
+        <!-- Transmission Beam -->
+        <div class="card card--beam">
+          <div class="card__header">
+            <h2 class="card__title">Live Transmission Beam</h2>
+            <div class="pill" id="beam-pill"><span class="pill__dot"></span>Idle</div>
+          </div>
+          <div class="beam-viewport">
+            <canvas id="beam-canvas"></canvas>
+            <!-- Floating overlay labels -->
+            <div class="beam-label beam-label--left" id="beam-lbl-left">GRID<br/>NODE A</div>
+            <div class="beam-label beam-label--right" id="beam-lbl-right">HOME<br/>NODE B</div>
+          </div>
+          <div class="beam-footer">
+            <div class="bf-item"><span class="bf-label">Resonance</span><span class="bf-val accent-cyan">14.85 kHz</span></div>
+            <div class="bf-item"><span class="bf-label">Link</span><span class="bf-val" id="bf-link">Offline</span></div>
+            <div class="bf-item"><span class="bf-label">FPS</span><span class="bf-val" id="bf-fps">60</span></div>
+          </div>
+        </div>
+
+        <!-- OTP Handshake -->
+        <div class="card card--otp">
+          <div class="card__header">
+            <h2 class="card__title">Secure Handshake</h2>
+            <div class="pill pill--amber" id="otp-pill"><span class="pill__dot"></span>Awaiting</div>
+          </div>
+
+          <div class="otp-display">
+            <span class="otp-label">AES-256 GCM TOKEN</span>
+            <div class="otp-code" id="otp-code">— — — — — —</div>
+            <span class="otp-timer" id="otp-timer">No active session</span>
+          </div>
+
+          <button class="btn btn--accent" id="btn-request">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Request Electricity
+          </button>
+          <button class="btn btn--outline" id="btn-submit-otp" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Submit OTP to Grid
+          </button>
+
+          <div class="enc-bar">
+            <div class="enc-track"><div class="enc-fill" id="enc-fill"></div></div>
+            <span class="enc-text" id="enc-text">Tunnel idle</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 2: Gauges + Relays + System -->
+      <div class="row row--bottom">
+
+        <!-- Power Gauges -->
+        <div class="card card--gauges">
+          <div class="card__header">
+            <h2 class="card__title">Power Telemetry</h2>
+          </div>
+          <div class="gauges-row">
+            <div class="gauge">
+              <div class="gauge__ring">
+                <svg viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="50" class="gauge__track"/>
+                  <circle cx="60" cy="60" r="50" class="gauge__arc gauge__arc--cyan" id="arc-v" stroke-dashoffset="314"/>
+                </svg>
+                <div class="gauge__center">
+                  <span class="gauge__value" id="g-volts">0.0</span>
+                  <span class="gauge__unit">Volts</span>
+                </div>
+              </div>
+              <span class="gauge__label">VOLTAGE</span>
+              <span class="gauge__limit">Max 240V</span>
+            </div>
+            <div class="gauge">
+              <div class="gauge__ring">
+                <svg viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="50" class="gauge__track"/>
+                  <circle cx="60" cy="60" r="50" class="gauge__arc gauge__arc--purple" id="arc-a" stroke-dashoffset="314"/>
+                </svg>
+                <div class="gauge__center">
+                  <span class="gauge__value" id="g-amps">0.00</span>
+                  <span class="gauge__unit">Amps</span>
+                </div>
+              </div>
+              <span class="gauge__label">CURRENT</span>
+              <span class="gauge__limit">Max 15A</span>
+            </div>
+            <div class="gauge">
+              <div class="gauge__ring">
+                <svg viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="50" class="gauge__track"/>
+                  <circle cx="60" cy="60" r="50" class="gauge__arc gauge__arc--amber" id="arc-w" stroke-dashoffset="314"/>
+                </svg>
+                <div class="gauge__center">
+                  <span class="gauge__value" id="g-watts">0</span>
+                  <span class="gauge__unit">Watts</span>
+                </div>
+              </div>
+              <span class="gauge__label">WATTAGE</span>
+              <span class="gauge__limit">Max 3600W</span>
+            </div>
+          </div>
+          <div class="safety-strip" id="safety-strip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span id="safety-msg">All readings within safe limits</span>
+          </div>
+        </div>
+
+        <!-- Relay Circuit -->
+        <div class="card card--relays">
+          <div class="card__header">
+            <h2 class="card__title">Relay Isolation Circuit</h2>
+          </div>
+          <div class="relay-diagram">
+            <div class="relay-node" id="rn-grid">
+              <div class="relay-ring">
+                <svg viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" class="relay-ring__track"/>
+                  <circle cx="50" cy="50" r="40" class="relay-ring__fill" id="rr-grid"/>
+                </svg>
+                <span class="relay-ring__icon">⚡</span>
+              </div>
+              <span class="relay-name">Grid Relay CH1</span>
+              <span class="relay-state" id="rs-grid">LOCKED</span>
+            </div>
+            <div class="relay-bridge" id="relay-bridge">
+              <div class="bridge-line"><div class="bridge-pulse"></div></div>
+              <span class="bridge-arrow">→</span>
+            </div>
+            <div class="relay-node" id="rn-home">
+              <div class="relay-ring">
+                <svg viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" class="relay-ring__track"/>
+                  <circle cx="50" cy="50" r="40" class="relay-ring__fill" id="rr-home"/>
+                </svg>
+                <span class="relay-ring__icon">🏠</span>
+              </div>
+              <span class="relay-name">Home Safety</span>
+              <span class="relay-state" id="rs-home">LOCKED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Monitor -->
+        <div class="card card--monitor">
+          <div class="card__header">
+            <h2 class="card__title">System Monitor</h2>
+          </div>
+
+          <div class="mon-nodes">
+            <div class="mon-node" id="mn-grid">
+              <span class="mon-dot"></span>
+              <div class="mon-meta"><span class="mon-name">Grid Server</span><span class="mon-addr">localhost:5000</span></div>
+              <span class="mon-status" id="ms-grid">OFFLINE</span>
+            </div>
+            <div class="mon-node" id="mn-home">
+              <span class="mon-dot"></span>
+              <div class="mon-meta"><span class="mon-name">Home ESP32</span><span class="mon-addr">ws://192.168.1.50</span></div>
+              <span class="mon-status" id="ms-home">OFFLINE</span>
+            </div>
+          </div>
+
+          <div class="mon-latency">
+            <span class="mon-lat-lbl">Latency</span>
+            <canvas id="spark-canvas" width="100" height="22"></canvas>
+            <span class="mon-lat-val" id="lat-val">0ms</span>
+          </div>
+
+          <div class="mon-stream">
+            <span class="mon-stream-label">Encrypted Bytestream</span>
+            <div class="stream-box" id="stream-box">Awaiting transmission...</div>
+            <div class="stream-stats">
+              <span>Packets: <strong id="st-packets">0</strong></span>
+              <span>Integrity: <strong id="st-integrity">100%</strong></span>
+            </div>
+          </div>
+
+          <div class="mon-log">
+            <span class="mon-log-label">Event Log</span>
+            <div class="log-scroll" id="log-scroll"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── TAB: MARKETPLACE ── -->
+    <section class="view" id="view-market">
+      <div class="section-hero">
+        <h2>WETA Decentralized Energy Grid Marketplace</h2>
+        <p>Peer-to-peer wireless power trading. Sell excess harvested energy, purchase premium grid reserve packets, or track carbon credits securely.</p>
+      </div>
+      <div class="trio-grid">
+        <div class="card card--dark">
+          <h3 class="card__accent-title">Real-time Energy Tariff</h3>
+          <div class="tariff-big"><span class="tariff-num">$0.124</span><span class="tariff-unit">per kWh</span></div>
+          <span class="tariff-trend up">↑ 2.4% last hour</span>
+          <canvas id="tariff-chart" height="80"></canvas>
+        </div>
+        <div class="card card--dark">
+          <h3 class="card__accent-title">Active Energy Contracts</h3>
+          <div class="contract-list">
+            <div class="contract-row"><div><strong>Grid Source A Packet</strong><span>250 kWh</span></div><button class="btn btn--sm">Purchase</button></div>
+            <div class="contract-row"><div><strong>Green Hydro Pack</strong><span>80 kWh</span></div><button class="btn btn--sm">Purchase</button></div>
+            <div class="contract-row"><div><strong>Localized Peer Solar</strong><span>45 kWh</span></div><button class="btn btn--sm">Purchase</button></div>
+          </div>
+        </div>
+        <div class="card card--dark">
+          <h3 class="card__accent-title">Peer Listing Portal</h3>
+          <form class="listing-form" onsubmit="event.preventDefault()">
+            <label>Credit Quantity (kWh)<input type="number" value="50" min="1"/></label>
+            <label>Asking Price ($/kWh)<input type="number" value="0.10" step="0.01"/></label>
+            <button class="btn btn--accent" type="button">List Excess Energy Credit</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: ECO-PLANTATION ── -->
+    <section class="view" id="view-plantation">
+      <div class="section-hero">
+        <h2>WETA Electromagnetic Field (EMF) Plantation</h2>
+        <p>Harvesting waste wireless transmission energy to stimulate botanical chloroplast output. Optimizing crop growth through frequency modulation bio-resonance loops.</p>
+      </div>
+      <div class="trio-grid">
+        <div class="card card--dark">
+          <h3 class="card__accent-title">Stimulation Field Status</h3>
+          <div class="field-big"><span class="field-num">8.42</span> <span class="field-unit">V/m</span></div>
+          <p class="field-desc">Harmonic Bio-resonance Loop engaged at 15.4 kHz</p>
+          <div class="bar-meters">
+            <div class="bar-meter"><div class="bm-head"><span>Soil Moisture</span><strong>78%</strong></div><div class="bm-track"><div class="bm-fill" style="width:78%"></div></div></div>
+            <div class="bar-meter"><div class="bm-head"><span>UV Absorption</span><strong>6.2 Optimal</strong></div><div class="bm-track"><div class="bm-fill" style="width:62%"></div></div></div>
+            <div class="bar-meter"><div class="bm-head"><span>Waste Heat Recovery</span><strong>44%</strong></div><div class="bm-track"><div class="bm-fill" style="width:44%"></div></div></div>
+          </div>
+        </div>
+        <div class="card card--dark">
+          <h3 class="card__accent-title">Crop Health Telemetry</h3>
+          <div class="crop-list">
+            <div class="crop-item"><span class="crop-emoji">🌱</span><div><strong>EMF Lettuce Pod A</strong><span>Growth speed: <em class="text-green">+42%</em></span></div></div>
+            <div class="crop-item"><span class="crop-emoji">🌿</span><div><strong>EMF Tomato Pod B</strong><span>Growth speed: <em class="text-green">+35%</em></span></div></div>
+            <div class="crop-item"><span class="crop-emoji">🍀</span><div><strong>EMF Basil Pod C</strong><span>Growth speed: <em class="text-green">+48%</em></span></div></div>
+          </div>
+        </div>
+        <div class="card card--dark">
+          <h3 class="card__accent-title">Field Calibration</h3>
+          <div class="cal-form">
+            <label>EMF Pulse Frequency
+              <select><option>15.4 kHz (Chlorella)</option><option>22.1 kHz (Solanum)</option><option>8.8 kHz (Germination)</option></select>
+            </label>
+            <div class="cal-toggle"><span>Auto Solar Drip</span><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+            <button class="btn btn--outline" id="btn-drip">Force 30s Irrigation Pulse</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <span>WETA Node B Terminal • <strong>v3.0.0</strong></span>
+    <span>Development Team: <strong>Aditya Raj</strong> & Co-Inventor <strong>Deepak Kumar Gupta</strong></span>
+  </footer>
+
+  <!-- ═══ SETTINGS SIDEBAR ═══ -->
+  <div class="overlay" id="overlay-settings">
+    <div class="sidebar">
+      <div class="sidebar__head"><h3>Configuration</h3><button class="close-x" id="btn-close-settings">✕</button></div>
+      <div class="sidebar__body">
+        <div class="sb-section">
+          <h4>Safety Thresholds</h4>
+          <label class="range-row">Voltage Limit<div class="range-wrap"><input type="range" id="cfg-v" min="100" max="440" value="240"/><span id="cfg-v-val">240V</span></div></label>
+          <label class="range-row">Current Limit<div class="range-wrap"><input type="range" id="cfg-a" min="1" max="30" value="15"/><span id="cfg-a-val">15A</span></div></label>
+          <label class="range-row">Wattage Limit<div class="range-wrap"><input type="range" id="cfg-w" min="500" max="10000" step="100" value="3600"/><span id="cfg-w-val">3600W</span></div></label>
+        </div>
+        <div class="sb-section">
+          <h4>Audio</h4>
+          <div class="cal-toggle"><span>Enable Sound FX</span><label class="toggle"><input type="checkbox" id="cfg-audio" checked/><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="sb-section sb-actions">
+          <button class="btn btn--danger" id="btn-estop">Emergency Stop</button>
+          <button class="btn btn--outline" id="btn-reset-cfg">Reset Defaults</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ OTP INPUT MODAL ═══ -->
+  <div class="overlay" id="overlay-otp">
+    <div class="modal">
+      <span class="modal__tag">🔒 SECURE CORRIDOR</span>
+      <h3>Enter Handshake Code</h3>
+      <p>Type the 6-digit OTP shown on the Grid Control Center to authenticate the power corridor.</p>
+      <input class="otp-field" id="otp-field" type="text" maxlength="6" placeholder="••••••" autocomplete="off"/>
+      <div class="modal__actions">
+        <button class="btn btn--accent" id="btn-verify">Verify & Activate</button>
+        <button class="btn btn--ghost" id="btn-cancel-otp">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ OVERLOAD MODAL ═══ -->
+  <div class="overlay overlay--danger" id="overlay-overload">
+    <div class="modal modal--danger">
+      <span class="modal__tag modal__tag--danger">⚠️ SAFETY TRIP</span>
+      <h3>Critical Overload Shutoff</h3>
+      <p id="ol-desc">Electrical readings exceeded safe thresholds. Isolation relay disengaged.</p>
+      <div class="ol-grid">
+        <div class="ol-cell"><span>Voltage</span><strong id="ol-v">0V</strong></div>
+        <div class="ol-cell"><span>Current</span><strong id="ol-a">0A</strong></div>
+        <div class="ol-cell"><span>Wattage</span><strong id="ol-w">0W</strong></div>
+      </div>
+      <button class="btn btn--danger" id="btn-ack-ol">Acknowledge & Reset</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
