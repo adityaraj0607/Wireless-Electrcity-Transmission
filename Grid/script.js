@@ -47,6 +47,10 @@
     pwrVoltage: $('pwr-voltage'),
     pwrCurrent: $('pwr-current'),
     pwrWattage: $('pwr-wattage'),
+    pwrFreq: $('pwr-frequency'),
+    gridAvailCap: $('grid-avail-cap'),
+    gridCurrentLoad: $('pwr-wattage-kpi'),
+    gridActiveSessions: $('grid-active-sessions'),
     modal: $('modal-ov'),
     mSrc: $('m-src'),
     mTime: $('m-time'),
@@ -252,6 +256,12 @@
     socket.on('state_sync', data => {
       S.ch1 = data.grid.ch1;
       S.ch2 = data.grid.ch2;
+      
+      // Update active sessions based on connected channels
+      let activeSess = 0;
+      if (S.ch1) activeSess++;
+      if (S.ch2) activeSess++;
+      if (D.gridActiveSessions) D.gridActiveSessions.textContent = activeSess.toString();
       S.pending = data.pending;
       S.activeChannel = data.grid.channel;
       if (data.otp && data.otp.code) S.otp = data.otp.code;
@@ -280,9 +290,23 @@
     });
 
     socket.on('telemetry_update', data => {
-      D.pwrVoltage.textContent = `${data.voltage} V`;
-      D.pwrCurrent.textContent = `${data.current} A`;
-      D.pwrWattage.textContent = `${data.wattage} W`;
+      if (D.pwrVoltage) D.pwrVoltage.textContent = `${data.voltage} V`;
+      if (D.pwrCurrent) D.pwrCurrent.textContent = `${data.current} A`;
+      if (D.pwrWattage) D.pwrWattage.textContent = `${data.wattage} W`;
+      if (D.pwrFreq && data.frequency) D.pwrFreq.textContent = `${data.frequency.toFixed(2)} Hz`;
+      
+      // Calculate realistic MW Load based on wattage (assuming scale-up for grid representation if wattage is small, or raw if large)
+      // For hardware demonstration, usually ESP32 sends a few watts. We'll show real watts in telemetry, but maybe kW or MW in overview.
+      // Let's just use data.wattage / 1000 for kW, or / 1000000 for MW. Let's scale it by 1000 to simulate a larger grid if wattage is < 1000, or just show real kW.
+      let kw = data.wattage / 1000;
+      let mw = data.wattage / 1000000;
+      if (data.wattage > 0) {
+        if (D.gridCurrentLoad) D.gridCurrentLoad.textContent = `${kw.toFixed(2)} kW`;
+        if (D.gridAvailCap) D.gridAvailCap.textContent = `${(50.0 - kw).toFixed(2)} kW`;
+      } else {
+        if (D.gridCurrentLoad) D.gridCurrentLoad.textContent = `0.00 kW`;
+        if (D.gridAvailCap) D.gridAvailCap.textContent = `50.00 kW`;
+      }
     });
 
     socket.on('transmission_active', data => {

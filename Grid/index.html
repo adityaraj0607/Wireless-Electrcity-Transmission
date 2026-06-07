@@ -147,7 +147,7 @@
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00d9ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                       <span class="text-dim" style="font-size:0.65rem; font-weight:600;">AVAILABLE CAPACITY</span>
                     </div>
-                    <strong class="font-orbitron text-white" style="font-size:1.1rem;">25.80 MW</strong>
+                    <strong class="font-orbitron text-white" style="font-size:1.1rem;" id="grid-avail-cap">0.00 MW</strong>
                   </div>
 
                   <div class="stat-block" style="flex:1; border-right:1px solid rgba(255,255,255,0.08); padding:0 12px; display: flex; flex-direction: column; justify-content: center;">
@@ -155,7 +155,7 @@
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#2F7BFF" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                       <span class="text-dim" style="font-size:0.65rem; font-weight:600;">CURRENT LOAD</span>
                     </div>
-                    <strong class="font-orbitron text-white" style="font-size:1.1rem;" id="pwr-wattage-kpi">15.42 MW</strong>
+                    <strong class="font-orbitron text-white" style="font-size:1.1rem;" id="pwr-wattage-kpi">0.00 MW</strong>
                   </div>
 
                   <div class="stat-block" style="flex:1; border-right:1px solid rgba(255,255,255,0.08); padding:0 12px; display: flex; flex-direction: column; justify-content: center;">
@@ -163,7 +163,7 @@
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00d9ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
                       <span class="text-dim" style="font-size:0.65rem; font-weight:600;">ACTIVE SESSIONS</span>
                     </div>
-                    <strong class="font-orbitron text-white" style="font-size:1.1rem;">12</strong>
+                    <strong class="font-orbitron text-white" style="font-size:1.1rem;" id="grid-active-sessions">0</strong>
                   </div>
 
                   <div class="stat-block" style="flex:1; padding-left:12px; display: flex; flex-direction: column; justify-content: center;">
@@ -347,7 +347,7 @@
                     <div class="tel-sparkline-container text-green">
                       <svg viewBox="0 0 60 20"><path d="M0 10 Q10 5 20 15 T40 10 T60 12" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
                     </div>
-                    <strong class="tel-value" id="pwr-voltage">223.6 V</strong>
+                    <strong class="tel-value" id="pwr-voltage">0.0 V</strong>
                   </div>
                   
                   <div class="tel-row">
@@ -358,7 +358,7 @@
                     <div class="tel-sparkline-container text-cyan">
                       <svg viewBox="0 0 60 20"><path d="M0 15 L20 15 L40 15 L60 15" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
                     </div>
-                    <strong class="tel-value" id="pwr-current">2.45 A</strong>
+                    <strong class="tel-value" id="pwr-current">0.00 A</strong>
                   </div>
 
                   <div class="tel-row">
@@ -369,7 +369,7 @@
                     <div class="tel-sparkline-container text-purple">
                       <svg viewBox="0 0 60 20"><path d="M0 15 L20 15 L40 15 L60 15" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
                     </div>
-                    <strong class="tel-value">547.1 W</strong>
+                    <strong class="tel-value" id="pwr-wattage">0.0 W</strong>
                   </div>
 
                   <div class="tel-row">
@@ -380,7 +380,7 @@
                     <div class="tel-sparkline-container text-cyan">
                       <svg viewBox="0 0 60 20"><path d="M0 15 L20 15 L40 15 L60 15" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
                     </div>
-                    <strong class="tel-value">50.02 Hz</strong>
+                    <strong class="tel-value" id="pwr-frequency">0.00 Hz</strong>
                   </div>
 
                   <div class="tel-row">
