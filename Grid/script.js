@@ -51,6 +51,12 @@
     gridAvailCap: $('grid-avail-cap'),
     gridCurrentLoad: $('pwr-wattage-kpi'),
     gridActiveSessions: $('grid-active-sessions'),
+    topoGrid: $('topo-status-grid'),
+    topoR1: $('topo-status-r1'),
+    topoR2: $('topo-status-r2'),
+    topoH101: $('topo-status-h101'),
+    topoH117: $('topo-status-h117'),
+    topoH203: $('topo-status-h203'),
     modal: $('modal-ov'),
     mSrc: $('m-src'),
     mTime: $('m-time'),
@@ -1070,12 +1076,22 @@
       D.vConn.textContent = 'ONLINE';
       D.vConn.className = 'metric__val v-on';
       D.dConn.textContent = 'Bridge Connection Active';
+      
+      if (D.topoGrid) { D.topoGrid.textContent = 'ONLINE'; D.topoGrid.style.color = '#00ff88'; }
+      if (D.topoH101) { D.topoH101.textContent = 'ONLINE'; D.topoH101.style.color = '#00ff88'; }
+      if (D.topoH117) { D.topoH117.textContent = 'ONLINE'; D.topoH117.style.color = '#00ff88'; }
+      if (D.topoH203) { D.topoH203.textContent = 'ONLINE'; D.topoH203.style.color = '#00ff88'; }
     } else {
       D.hStatus.classList.add('offline');
       D.sLabel.textContent = 'Offline';
       D.vConn.textContent = 'OFFLINE';
       D.vConn.className = 'metric__val v-off';
       D.dConn.textContent = 'Bridge Link Disconnected';
+
+      if (D.topoGrid) { D.topoGrid.textContent = 'OFFLINE'; D.topoGrid.style.color = '#ffaa00'; }
+      if (D.topoH101) { D.topoH101.textContent = 'OFFLINE'; D.topoH101.style.color = '#ffaa00'; }
+      if (D.topoH117) { D.topoH117.textContent = 'OFFLINE'; D.topoH117.style.color = '#ffaa00'; }
+      if (D.topoH203) { D.topoH203.textContent = 'OFFLINE'; D.topoH203.style.color = '#ffaa00'; }
     }
 
     // 2. Channel 1 State
@@ -1086,6 +1102,7 @@
       D.ch1State.textContent = 'ACTIVE';
       D.ch1State.className = 'viewport__ch-state active';
       D.ch1Label.querySelector('.viewport__ch-dot').classList.add('active-ch1');
+      if (D.topoR1) { D.topoR1.textContent = 'ACTIVE'; D.topoR1.style.color = '#00ff88'; }
     } else {
       D.vRelayCh1.textContent = 'DISENGAGED';
       D.vRelayCh1.className = 'metric__val v-idle';
@@ -1093,6 +1110,7 @@
       D.ch1State.textContent = 'IDLE';
       D.ch1State.className = 'viewport__ch-state';
       D.ch1Label.querySelector('.viewport__ch-dot').classList.remove('active-ch1');
+      if (D.topoR1) { D.topoR1.textContent = 'STANDBY'; D.topoR1.style.color = '#ffaa00'; }
     }
 
     // 3. Channel 2 State
@@ -1103,6 +1121,7 @@
       D.ch2State.textContent = 'ACTIVE';
       D.ch2State.className = 'viewport__ch-state active';
       D.ch2Label.querySelector('.viewport__ch-dot').classList.add('active-ch2');
+      if (D.topoR2) { D.topoR2.textContent = 'ACTIVE'; D.topoR2.style.color = '#00ff88'; }
     } else {
       D.vRelayCh2.textContent = 'DISENGAGED';
       D.vRelayCh2.className = 'metric__val v-idle';
@@ -1110,6 +1129,7 @@
       D.ch2State.textContent = 'IDLE';
       D.ch2State.className = 'viewport__ch-state';
       D.ch2Label.querySelector('.viewport__ch-dot').classList.remove('active-ch2');
+      if (D.topoR2) { D.topoR2.textContent = 'STANDBY'; D.topoR2.style.color = '#ffaa00'; }
     }
 
     // 4. Request pending card
