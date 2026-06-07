@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
   
-  <link rel="stylesheet" href="style.css?v=4"/>
+  <link rel="stylesheet" href="style.css?v=5"/>
 </head>
 <body>
   
@@ -121,12 +121,12 @@
         </aside>
 
         <!-- MAIN CONTENT AREA -->
-        <div class="main-content" style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px; height: 100%; min-height: 0; overflow: hidden;">
+        <div class="main-content">
           
           <!-- TOP ROW: OVERVIEW & TELEMETRY -->
-          <div class="top-row-grid" style="display: flex; gap: 16px; flex: 1.5; min-height: 0;">
+          <div class="top-row-grid">
             
-            <div class="left-col" style="flex: 3.5; display: flex; flex-direction: column; gap: 16px; min-height: 0;">
+            <div class="left-col">
               <!-- GRID OVERVIEW -->
               <section class="card overview-card" style="flex-shrink: 0; padding: 12px 16px;">
                 <div class="card__header" style="margin-bottom:8px;">
@@ -137,9 +137,9 @@
                   <div class="stat-block" style="flex:1.2; border-right:1px solid rgba(255,255,255,0.08); padding-right:12px; display: flex; flex-direction: column; justify-content: center;">
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
                       <div class="pulse-dot bg-green" style="width:12px; height:12px; border-radius: 50%; box-shadow:0 0 12px #00ff88; background: #00ff88;"></div>
-                      <strong style="font-size:1.2rem; color:#00ff88; font-weight:800; text-shadow:0 0 10px rgba(0,255,136,0.3);">GRID ONLINE</strong>
+                      <strong style="font-size:1.2rem; font-weight:800; text-shadow:0 0 10px rgba(255,170,0,0.3);" id="grid-online-status"><span style="color:#ffaa00;">GRID OFFLINE</span></strong>
                     </div>
-                    <div class="text-dim" style="font-size:0.65rem; letter-spacing:0.5px;">System operating normally</div>
+                    <div class="text-dim" style="font-size:0.65rem; letter-spacing:0.5px;" id="grid-online-sub">Waiting for hardware connection</div>
                   </div>
 
                   <div class="stat-block" style="flex:1; border-right:1px solid rgba(255,255,255,0.08); padding:0 12px; display: flex; flex-direction: column; justify-content: center;">
@@ -331,7 +331,7 @@
             </div>
 
             <!-- RIGHT COL: LIVE TELEMETRY -->
-            <div class="right-col" style="flex: 1.2; display: flex; flex-direction: column; min-height: 0;">
+            <div class="right-col">
               <section class="card telemetry-card" style="flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 12px 16px;">
                 <div class="card__header" style="display:flex; justify-content:space-between; flex-shrink: 0; margin-bottom: 8px;">
                   <span class="card__title font-space" style="color:#fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">LIVE TELEMETRY</span>
@@ -433,7 +433,7 @@
           </div>
 
           <!-- BOTTOM ROW -->
-          <div class="bottom-row-grid" style="display: grid; grid-template-columns: 1.2fr 1.2fr 1fr; gap: 16px; flex: 1; min-height: 0;">
+          <div class="bottom-row-grid">
             
             <!-- TRANSMISSION SESSIONS -->
             <section class="card bottom-panel" style="display: flex; flex-direction: column; min-height: 0; padding: 12px 16px;">

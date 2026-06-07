@@ -57,6 +57,8 @@
     topoH101: $('topo-status-h101'),
     topoH117: $('topo-status-h117'),
     topoH203: $('topo-status-h203'),
+    gridOnlineStatus: $('grid-online-status'),
+    gridOnlineSub: $('grid-online-sub'),
     modal: $('modal-ov'),
     mSrc: $('m-src'),
     mTime: $('m-time'),
@@ -1081,6 +1083,8 @@
       if (D.topoH101) { D.topoH101.textContent = 'ONLINE'; D.topoH101.style.color = '#00ff88'; }
       if (D.topoH117) { D.topoH117.textContent = 'ONLINE'; D.topoH117.style.color = '#00ff88'; }
       if (D.topoH203) { D.topoH203.textContent = 'ONLINE'; D.topoH203.style.color = '#00ff88'; }
+      if (D.gridOnlineStatus) { D.gridOnlineStatus.innerHTML = '<span style="color:#00ff88;">GRID ONLINE</span>'; D.gridOnlineStatus.style.textShadow = '0 0 10px rgba(0,255,136,0.3)'; }
+      if (D.gridOnlineSub) D.gridOnlineSub.textContent = 'System operating normally';
     } else {
       D.hStatus.classList.add('offline');
       D.sLabel.textContent = 'Offline';
@@ -1092,6 +1096,8 @@
       if (D.topoH101) { D.topoH101.textContent = 'OFFLINE'; D.topoH101.style.color = '#ffaa00'; }
       if (D.topoH117) { D.topoH117.textContent = 'OFFLINE'; D.topoH117.style.color = '#ffaa00'; }
       if (D.topoH203) { D.topoH203.textContent = 'OFFLINE'; D.topoH203.style.color = '#ffaa00'; }
+      if (D.gridOnlineStatus) { D.gridOnlineStatus.innerHTML = '<span style="color:#ffaa00;">GRID OFFLINE</span>'; D.gridOnlineStatus.style.textShadow = '0 0 10px rgba(255,170,0,0.3)'; }
+      if (D.gridOnlineSub) D.gridOnlineSub.textContent = 'Waiting for hardware connection';
     }
 
     // 2. Channel 1 State

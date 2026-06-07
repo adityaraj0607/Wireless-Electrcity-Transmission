@@ -3075,6 +3075,7 @@ body.no-scanlines .crt-overlay {
   flex-direction: column !important;
   gap: 16px !important;
   min-height: 0 !important;
+  overflow: hidden !important;
 }
 
 .right-col {
@@ -3082,6 +3083,7 @@ body.no-scanlines .crt-overlay {
   display: flex !important;
   flex-direction: column !important;
   min-height: 0 !important;
+  overflow: hidden !important;
 }
 
 .bottom-row-grid {
