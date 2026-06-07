@@ -3,7 +3,7 @@ WIRELESS ELECTRICITY TRANSMISSION — MASTER CONTROL SERVER
 Flask-SocketIO Bridge: Grid <-> Home <-> ESP32
 Inventors: Aditya Raj & Deepak Kumar Gupta | v3.0
 """
-import os, json, time, secrets, threading, random
+import os, json, time, secrets, threading, random, sqlite3
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_socketio import SocketIO, emit, join_room, leave_room
@@ -16,6 +16,63 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading',
                     ping_interval=5, ping_timeout=10)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'database.db')
+
+# ═══ DATABASE SETUP ═══
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS telemetry_history (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    voltage REAL, current REAL, wattage REAL, frequency REAL)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS events (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    event_type TEXT, description TEXT)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS wallet (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    type TEXT, amount REAL, description TEXT)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS settings (
+                    key TEXT PRIMARY KEY, value TEXT)''')
+    
+    # Initialize wallet if empty
+    c.execute("SELECT SUM(amount) FROM wallet")
+    if not c.fetchone()[0]:
+        c.execute("INSERT INTO wallet (type, amount, description) VALUES ('credit', 5000.00, 'Initial Balance')")
+        
+    conn.commit()
+    conn.close()
+
+init_db()
+
+def db_log_telemetry(v, a, w, f):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.execute("INSERT INTO telemetry_history (voltage, current, wattage, frequency) VALUES (?, ?, ?, ?)", (v, a, w, f))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print("DB Error:", e)
+
+def db_log_event(event_type, description):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.execute("INSERT INTO events (event_type, description) VALUES (?, ?)", (event_type, description))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print("DB Error:", e)
+
+def db_wallet_tx(tx_type, amount, description):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.execute("INSERT INTO wallet (type, amount, description) VALUES (?, ?, ?)", (tx_type, amount, description))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print("DB Error:", e)
 
 # ═══ GLOBAL STATE ═══
 class State:
@@ -194,11 +251,44 @@ def home_s(f):
 def api_status(): 
     return jsonify(S.full_state())
 
+@app.route('/api/history')
+def api_history():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT * FROM telemetry_history ORDER BY id DESC LIMIT 100")
+    rows = [dict(r) for r in c.fetchall()]
+    conn.close()
+    return jsonify(rows)
+
+@app.route('/api/wallet')
+def api_wallet():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT SUM(amount) as balance FROM wallet")
+    bal = c.fetchone()['balance'] or 0
+    c.execute("SELECT * FROM wallet ORDER BY id DESC LIMIT 50")
+    tx = [dict(r) for r in c.fetchall()]
+    conn.close()
+    return jsonify({"balance": bal, "transactions": tx})
+
+@app.route('/api/timeline')
+def api_timeline():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT * FROM events ORDER BY id DESC LIMIT 50")
+    events = [dict(r) for r in c.fetchall()]
+    conn.close()
+    return jsonify(events)
+
 @app.route('/api/request-electricity', methods=['POST'])
 def api_req():
     S.pending = True
     S.req_source = "Home Node"
     otp = S.gen_otp()
+    db_log_event("REQUEST", "Electricity requested by Home Node via API")
     
     socketio.emit('electricity_request', {
         'source': 'Home Node',
@@ -222,6 +312,7 @@ def api_verify():
         if not ch: 
             return jsonify({"status": "error", "message": "No channels"})
         
+        db_log_event("OTP_VERIFY", f"OTP verified. Channel {ch} assigned via API.")
         S.tx_active = True
         S.tx_start = datetime.now()
         S.home_relay = True
@@ -350,6 +441,7 @@ def on_socket_req_elec():
     S.pending = True
     S.req_source = "Home Node"
     otp = S.gen_otp()
+    db_log_event("REQUEST", "Electricity requested by Home Node via Socket")
     
     socketio.emit('electricity_request', {
         'source': 'Home Node',
@@ -369,6 +461,7 @@ def on_socket_submit_otp(data):
     ok, msg = S.verify_otp(otp)
     if ok:
         ch = S.assign_ch()
+        db_log_event("OTP_VERIFY", f"OTP verified. Channel {ch} assigned via Socket.")
         S.tx_active = True
         S.tx_start = datetime.now()
         S.home_relay = True
@@ -425,6 +518,8 @@ def on_telem(d):
         'frequency': round(S.freq, 2),
         'ts': time.time()
     }
+    if S.tx_active:
+        db_log_telemetry(S.voltage, S.current, S.wattage, S.freq)
     
     socketio.emit('telemetry_update', t, room='home')
     socketio.emit('telemetry_update', t, room='grid')
@@ -475,6 +570,7 @@ def sim_loop():
                     'frequency': round(S.freq, 2),
                     'ts': time.time()
                 }
+                db_log_telemetry(S.voltage, S.current, S.wattage, S.freq)
                 
                 socketio.emit('telemetry_update', t, room='home')
                 socketio.emit('telemetry_update', t, room='grid')

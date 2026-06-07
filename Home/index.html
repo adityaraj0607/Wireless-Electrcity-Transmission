@@ -3,389 +3,674 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="WETA Home Receiver Terminal — Wireless Electricity Transmission Consumer Dashboard"/>
-  <title>WETA HOME RECEIVER — Wireless Power Terminal</title>
+  <title>WETA HOME RECEIVER TERMINAL</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-
-  <!-- ═══ BOOT SPLASH SCREEN ═══ -->
-  <div class="boot-splash" id="boot-splash">
-    <div class="boot-content">
-      <div class="boot-ring">
-        <svg viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="52" class="boot-ring__track"/>
-          <circle cx="60" cy="60" r="52" class="boot-ring__arc"/>
-        </svg>
-        <span class="boot-bolt">⚡</span>
+  <div id="app">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <h1>WETA</h1>
+          <h2>HOME RECEIVER TERMINAL</h2>
+          <p>Wireless Electricity Transmission</p>
+        </div>
       </div>
-      <h2 class="boot-title">WETA HOME TERMINAL</h2>
-      <p class="boot-sub">Initializing Wireless Electricity Receiver Node B...</p>
-      <div class="boot-steps" id="boot-steps">
-        <div class="boot-step active" id="bs-1">▸ Loading cryptographic modules...</div>
-        <div class="boot-step" id="bs-2">▸ Establishing Socket.IO bridge...</div>
-        <div class="boot-step" id="bs-3">▸ Calibrating telemetry sensors...</div>
-        <div class="boot-step" id="bs-4">▸ System ready.</div>
-      </div>
-      <div class="boot-bar"><div class="boot-bar__fill" id="boot-fill"></div></div>
-    </div>
-  </div>
 
-  <!-- ═══ NAVIGATION BAR ═══ -->
-  <nav class="topbar">
-    <div class="topbar__brand">
-      <div class="topbar__logo"><span class="bolt-icon">⚡</span></div>
-      <div class="topbar__text">
-        <span class="topbar__title">WETA Home Terminal</span>
-        <span class="topbar__sub">Wireless Electricity • Consumer Node B</span>
-      </div>
-    </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8l4 4-4 4M8 12h8"></path></svg>
+          Request Electricity
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12H3M21 12l-6-6M21 12l-6 6"></path></svg>
+          Transmission Status
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          Live Monitoring
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          Energy Usage
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Safety & Security
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Activity Timeline
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+          Device & Relay
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          Energy Wallet
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          Settings
+        </a>
+      </nav>
 
-    <div class="topbar__tabs">
-      <button class="tab-pill active" data-tab="dashboard">Dashboard</button>
-      <button class="tab-pill" data-tab="market">Marketplace</button>
-      <button class="tab-pill" data-tab="plantation">Eco-Plantation</button>
-    </div>
-
-    <div class="topbar__right">
-      <div class="conn-chip" id="conn-chip">
-        <span class="conn-dot" id="conn-dot"></span>
-        <span class="conn-label" id="conn-label">Connected</span>
-      </div>
-      <span class="clock-chip" id="clock-chip">00:00:00</span>
-      <button class="icon-btn" id="btn-settings" title="Settings">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      </button>
-    </div>
-  </nav>
-
-  <!-- ═══ MAIN CONTENT AREA ═══ -->
-  <main class="main-wrap">
-
-    <!-- ── TAB: DASHBOARD ── -->
-    <section class="view active" id="view-dashboard">
-
-      <!-- ROW 1: Beam Visualisation + OTP Handshake -->
-      <div class="row row--top">
-
-        <!-- Transmission Beam -->
-        <div class="card card--beam">
-          <div class="card__header">
-            <h2 class="card__title">Live Transmission Beam</h2>
-            <div class="pill" id="beam-pill"><span class="pill__dot"></span>Idle</div>
+      <div class="sidebar-bottom">
+        <div class="wallet-card">
+          <div class="wallet-header">
+            <span>WALLET BALANCE</span>
           </div>
-          <div class="beam-viewport">
-            <canvas id="beam-canvas"></canvas>
-            <!-- Floating overlay labels -->
-            <div class="beam-label beam-label--left" id="beam-lbl-left">GRID<br/>NODE A</div>
-            <div class="beam-label beam-label--right" id="beam-lbl-right">HOME<br/>NODE B</div>
+          <div class="wallet-amount">
+            <span id="sidebar-wallet-bal">--.--</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
           </div>
-          <div class="beam-footer">
-            <div class="bf-item"><span class="bf-label">Resonance</span><span class="bf-val accent-cyan">14.85 kHz</span></div>
-            <div class="bf-item"><span class="bf-label">Link</span><span class="bf-val" id="bf-link">Offline</span></div>
-            <div class="bf-item"><span class="bf-label">FPS</span><span class="bf-val" id="bf-fps">60</span></div>
+          <div class="wallet-unit">Credits</div>
+        </div>
+
+        <a href="#" class="support-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+          <div class="support-text">
+            <span>NEED HELP?</span>
+            <strong>Contact Support</strong>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-status">
+          <div class="status-item">
+            <span class="label">HOME NODE</span>
+            <strong class="value text-white">HOME-117</strong>
+          </div>
+          <div class="status-item">
+            <span class="label">NODE ID</span>
+            <strong class="value text-white">N16R8-ESP32</strong>
+          </div>
+          <div class="status-item">
+            <span class="label">STATUS</span>
+            <strong class="value text-green"><span class="dot green"></span> CONNECTED</strong>
+          </div>
+          <div class="status-item">
+            <span class="label">AES-256</span>
+            <strong class="value text-cyan"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> SECURE</strong>
+          </div>
+          <div class="status-item">
+            <span class="label">GRID CONNECTION</span>
+            <strong class="value text-green">EXCELLENT <span class="bars"><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span></span></strong>
           </div>
         </div>
 
-        <!-- OTP Handshake -->
-        <div class="card card--otp">
-          <div class="card__header">
-            <h2 class="card__title">Secure Handshake</h2>
-            <div class="pill pill--amber" id="otp-pill"><span class="pill__dot"></span>Awaiting</div>
+        <div class="topbar-user">
+          <div class="clock">
+            <strong class="time" id="clock-time">17:54:32</strong>
+            <span class="date" id="clock-date">07 JUNE 2026</span>
+          </div>
+          <div class="notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="badge">3</span>
+          </div>
+          <div class="profile">
+            <div class="avatar">AR</div>
+            <div class="profile-info">
+              <strong class="name">Aditya Raj</strong>
+              <span class="role">Premium Consumer</span>
+            </div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+        </div>
+      </header>
+
+      
+      
+      <!-- DASHBOARD AREA -->
+      <div id="view-dashboard" class="dashboard-scroll view active">
+        <div class="grid-container">
+          
+          <!-- ROW 1 -->
+          <div class="row row-1">
+            <!-- POWER RECEIVING -->
+            <div class="card power-receiving">
+              <div class="card-header">
+                <h2>POWER RECEIVING</h2>
+                <div class="live-badge"><span class="dot"></span> LIVE</div>
+              </div>
+              <div class="power-content">
+                <div class="power-gauge">
+                  <svg viewBox="0 0 140 140">
+                    <defs>
+                      <linearGradient id="power-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#00D9FF" />
+                        <stop offset="100%" stop-color="#A855F7" />
+                      </linearGradient>
+                    </defs>
+                    <circle class="bg" cx="70" cy="70" r="62"></circle>
+                    <circle class="progress" cx="70" cy="70" r="62" stroke="url(#power-grad)"></circle>
+                  </svg>
+                  <div class="gauge-center">
+                    <svg class="bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <div class="value">567<span>W</span></div>
+                    <div class="label">Live Power</div>
+                  </div>
+                </div>
+                
+                <div class="power-stats">
+                  <div class="stat-item">
+                    <div class="icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                    <div class="stat-info">
+                      <span class="stat-label">Today's Usage</span>
+                      <strong class="stat-value">2.48 <span>kWh</span></strong>
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="icon cyan">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                    <div class="stat-info">
+                      <span class="stat-label">Today's Cost</span>
+                      <strong class="stat-value">₹ 12.48</strong>
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="icon text-cyan">
+                      <strong style="font-family: var(--font-mono); font-size: 14px;">%</strong>
+                    </div>
+                    <div class="stat-info">
+                      <span class="stat-label">Efficiency</span>
+                      <strong class="stat-value">96.8%</strong>
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="icon text-cyan">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                    </div>
+                    <div class="stat-info">
+                      <span class="stat-label">Grid Health</span>
+                      <strong class="stat-value">99.7%</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- TRANSMISSION STATUS -->
+            <div class="card transmission-status">
+              <div class="card-header">
+                <h2>TRANSMISSION STATUS</h2>
+              </div>
+              <div class="transmission-workflow">
+                <div class="step complete">
+                  <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div>
+                  <strong class="name">Request</strong>
+                  <span class="status text-green">Submitted</span>
+                  <span class="time" id="tx-time-request">--:--:--</span>
+                </div>
+                <div class="line active"></div>
+                <div class="step complete">
+                  <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+                  <strong class="name">OTP</strong>
+                  <span class="status text-green">Verified</span>
+                  <span class="time" id="tx-time-otp">--:--:--</span>
+                </div>
+                <div class="line active"></div>
+                <div class="step complete">
+                  <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg></div>
+                  <strong class="name">Channel</strong>
+                  <span class="status text-green">Assigned</span>
+                  <span class="time" id="tx-time-channel">--:--:--</span>
+                </div>
+                <div class="line active"></div>
+                <div class="step complete">
+                  <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></div>
+                  <strong class="name">Relay</strong>
+                  <span class="status text-green">Verified</span>
+                  <span class="time" id="tx-time-relay">--:--:--</span>
+                </div>
+                <div class="line active purple"></div>
+                <div class="step active pulse">
+                  <div class="icon-wrap glow-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+                  <strong class="name">Transmission</strong>
+                  <span class="status text-purple">Active</span>
+                  <span class="time" id="tx-time-active">--:--:--</span>
+                </div>
+                <div class="line dashed"></div>
+                <div class="step pending">
+                  <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                  <strong class="name">Delivery</strong>
+                  <span class="status text-amber">In Progress</span>
+                  <span class="time" id="tx-time-delivery">--:--:--</span>
+                </div>
+              </div>
+              <div class="transmission-details">
+                <div class="detail-box">
+                  <span class="label">ACTIVE CHANNEL</span>
+                  <strong class="value" id="tx-channel">--</strong>
+                </div>
+                <div class="detail-box">
+                  <span class="label">POWER REQUESTED</span>
+                  <strong class="value" id="tx-power-req">-- W</strong>
+                </div>
+                <div class="detail-box">
+                  <span class="label">DURATION</span>
+                  <strong class="value" id="tx-duration">--:--:--</strong>
+                </div>
+                <div class="detail-box">
+                  <span class="label">ELAPSED TIME</span>
+                  <strong class="value text-green" id="tx-elapsed">--:--:--</strong>
+                </div>
+                <div class="detail-box">
+                  <span class="label">STATUS</span>
+                  <strong class="value text-green" id="tx-status">Inactive <span class="dot red"></span></strong>
+                </div>
+                <div class="menu-dots"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></div>
+              </div>
+            </div>
           </div>
 
-          <div class="otp-display">
-            <span class="otp-label">AES-256 GCM TOKEN</span>
-            <div class="otp-code" id="otp-code">— — — — — —</div>
-            <span class="otp-timer" id="otp-timer">No active session</span>
+          <!-- ROW 2 -->
+          <div class="row row-2">
+            <!-- ENERGY FLOW -->
+            <div class="card energy-flow">
+              <div class="card-header">
+                <h2>ENERGY FLOW</h2>
+              </div>
+              <div class="flow-diagram">
+                <!-- 1. Grid Station -->
+                <div class="flow-node">
+                  <span class="node-label">Grid Station</span>
+                  <div class="custom-icon-wrapper cyan-glow">
+                    <svg viewBox="0 0 100 100" class="premium-svg">
+                      <defs>
+                        <linearGradient id="gridGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#1A2B4C"/>
+                          <stop offset="100%" stop-color="#0A1128"/>
+                        </linearGradient>
+                        <linearGradient id="cyanNeon" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stop-color="#00FFFF"/>
+                          <stop offset="100%" stop-color="#0088AA"/>
+                        </linearGradient>
+                        <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
+                          <feGaussianBlur stdDeviation="3" result="blur" />
+                          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                      </defs>
+                      <polygon points="10,70 50,90 90,70 90,30 50,10 10,30" fill="url(#gridGrad)" stroke="#00FFFF" stroke-width="1.5" stroke-opacity="0.5"/>
+                      <path d="M25,50 L35,25 L45,50 Z" fill="url(#gridGrad)" stroke="url(#cyanNeon)" stroke-width="1.5"/>
+                      <path d="M55,60 L65,30 L75,60 Z" fill="url(#gridGrad)" stroke="url(#cyanNeon)" stroke-width="1.5"/>
+                      <ellipse cx="50" cy="50" rx="12" ry="6" fill="none" stroke="#00FFFF" stroke-width="2" filter="url(#cyanGlow)"/>
+                      <ellipse cx="50" cy="40" rx="8" ry="4" fill="none" stroke="#00FFFF" stroke-width="1.5" filter="url(#cyanGlow)"/>
+                      <line x1="50" y1="20" x2="50" y2="40" stroke="#00FFFF" stroke-width="2" filter="url(#cyanGlow)"/>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="flow-link dashed-cyan animated-link"></div>
+
+                <!-- 2. Transmission Channel -->
+                <div class="flow-node">
+                  <span class="node-label">Transmission Channel<br><small>Channel 1</small></span>
+                  <div class="custom-icon-wrapper cyan-glow">
+                    <svg viewBox="0 0 100 100" class="premium-svg">
+                      <defs>
+                        <filter id="purpleGlow" x="-20%" y="-20%" width="140%" height="140%">
+                          <feGaussianBlur stdDeviation="3" result="blur" />
+                          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                      </defs>
+                      <polygon points="30,90 70,90 60,30 40,30" fill="none" stroke="#00D9FF" stroke-width="1.5" stroke-opacity="0.8"/>
+                      <line x1="35" y1="75" x2="65" y2="75" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.5"/>
+                      <line x1="37" y1="60" x2="63" y2="60" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.5"/>
+                      <line x1="39" y1="45" x2="61" y2="45" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.5"/>
+                      <line x1="30" y1="90" x2="65" y2="75" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
+                      <line x1="70" y1="90" x2="35" y2="75" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
+                      <line x1="35" y1="75" x2="63" y2="60" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
+                      <line x1="65" y1="75" x2="37" y2="60" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
+                      <line x1="37" y1="60" x2="61" y2="45" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
+                      <line x1="63" y1="60" x2="39" y2="45" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
+                      <line x1="20" y1="30" x2="80" y2="30" stroke="#A855F7" stroke-width="2" filter="url(#purpleGlow)"/>
+                      <line x1="25" y1="20" x2="75" y2="20" stroke="#A855F7" stroke-width="2" filter="url(#purpleGlow)"/>
+                      <circle cx="20" cy="35" r="2" fill="#00D9FF" filter="url(#cyanGlow)"/>
+                      <circle cx="80" cy="35" r="2" fill="#00D9FF" filter="url(#cyanGlow)"/>
+                      <circle cx="25" cy="25" r="2" fill="#00D9FF" filter="url(#cyanGlow)"/>
+                      <circle cx="75" cy="25" r="2" fill="#00D9FF" filter="url(#cyanGlow)"/>
+                      <line x1="50" y1="30" x2="50" y2="5" stroke="#00D9FF" stroke-width="2" filter="url(#cyanGlow)"/>
+                      <circle cx="50" cy="5" r="3" fill="#A855F7" filter="url(#purpleGlow)"/>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="flow-link solid-cyan animated-link-solid"></div>
+
+                <!-- 3. AES-256 Tunnel -->
+                <div class="flow-node center-shield">
+                  <span class="node-label">AES-256 Secure Tunnel</span>
+                  <div class="custom-icon-wrapper tunnel-glow">
+                    <svg viewBox="0 0 100 100" class="premium-svg">
+                      <defs>
+                        <radialGradient id="shieldGrad" cx="50%" cy="50%" r="50%">
+                          <stop offset="0%" stop-color="rgba(0, 217, 255, 0.2)"/>
+                          <stop offset="100%" stop-color="rgba(0, 0, 0, 0)"/>
+                        </radialGradient>
+                      </defs>
+                      <circle cx="50" cy="50" r="45" fill="url(#shieldGrad)" stroke="rgba(0, 217, 255, 0.3)" stroke-width="1"/>
+                      <polygon points="50,15 80,32.5 80,67.5 50,85 20,67.5 20,32.5" fill="none" stroke="rgba(0, 217, 255, 0.15)" stroke-width="2"/>
+                      <polygon points="50,5 90,28 90,72 50,95 10,72 10,28" fill="none" stroke="rgba(0, 217, 255, 0.05)" stroke-width="1"/>
+                      <path d="M50,25 L75,35 L75,55 C75,70 60,82 50,88 C40,82 25,70 25,55 L25,35 Z" fill="rgba(6, 8, 14, 0.8)" stroke="#00D9FF" stroke-width="3" filter="url(#cyanGlow)"/>
+                      <rect x="42" y="50" width="16" height="12" rx="2" fill="none" stroke="#A855F7" stroke-width="2" filter="url(#purpleGlow)"/>
+                      <path d="M45,50 V44 A5,5 0 0,1 55,44 V50" fill="none" stroke="#A855F7" stroke-width="2" filter="url(#purpleGlow)"/>
+                      <circle cx="50" cy="56" r="2" fill="#A855F7"/>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="flow-link solid-purple animated-link-solid-purple"></div>
+
+                <!-- 4. Home Relay -->
+                <div class="flow-node">
+                  <span class="node-label">Home Relay<br><small>N16R8-ESP32</small></span>
+                  <div class="custom-icon-wrapper purple-glow">
+                    <svg viewBox="0 0 100 100" class="premium-svg">
+                      <rect x="25" y="20" width="50" height="60" rx="4" fill="#0A1128" stroke="#A855F7" stroke-width="2" stroke-opacity="0.6"/>
+                      <rect x="30" y="25" width="40" height="20" rx="2" fill="#05070D" stroke="#A855F7" stroke-width="1"/>
+                      <rect x="35" y="30" width="30" height="10" fill="#1A1C23" stroke="#555" stroke-width="1"/>
+                      <circle cx="35" cy="65" r="3" fill="#00FF88" filter="url(#cyanGlow)"/>
+                      <circle cx="45" cy="65" r="3" fill="#A855F7" filter="url(#purpleGlow)"/>
+                      <circle cx="55" cy="65" r="3" fill="#FF4D4D"/>
+                      <circle cx="65" cy="65" r="3" fill="#333"/>
+                      <line x1="20" y1="30" x2="25" y2="30" stroke="#A855F7" stroke-width="2"/>
+                      <line x1="20" y1="40" x2="25" y2="40" stroke="#A855F7" stroke-width="2"/>
+                      <line x1="20" y1="50" x2="25" y2="50" stroke="#A855F7" stroke-width="2"/>
+                      <line x1="20" y1="60" x2="25" y2="60" stroke="#A855F7" stroke-width="2"/>
+                      <line x1="75" y1="30" x2="80" y2="30" stroke="#A855F7" stroke-width="2"/>
+                      <line x1="75" y1="40" x2="80" y2="40" stroke="#A855F7" stroke-width="2"/>
+                      <line x1="75" y1="50" x2="80" y2="50" stroke="#A855F7" stroke-width="2"/>
+                      <line x1="75" y1="60" x2="80" y2="60" stroke="#A855F7" stroke-width="2"/>
+                      <path d="M40,12 Q50,5 60,12" fill="none" stroke="#00D9FF" stroke-width="1.5" filter="url(#cyanGlow)"/>
+                      <path d="M44,16 Q50,11 56,16" fill="none" stroke="#00D9FF" stroke-width="1.5" filter="url(#cyanGlow)"/>
+                      <circle cx="50" cy="18" r="1.5" fill="#00D9FF"/>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="flow-link dashed-purple animated-link-purple"></div>
+
+                <!-- 5. Your Home -->
+                <div class="flow-node">
+                  <span class="node-label">Your Home<br><small>HOME-117</small></span>
+                  <div class="custom-icon-wrapper purple-glow">
+                    <svg viewBox="0 0 100 100" class="premium-svg">
+                      <polygon points="20,55 80,55 80,90 20,90" fill="#0A0D15" stroke="#A855F7" stroke-width="1.5"/>
+                      <polygon points="10,55 50,20 90,55 80,55 50,30 20,55" fill="#00D9FF" stroke="#00D9FF" stroke-width="1" filter="url(#cyanGlow)"/>
+                      <polygon points="20,55 50,30 80,55" fill="rgba(0, 217, 255, 0.1)"/>
+                      <rect x="42" y="65" width="16" height="25" fill="#05070D" stroke="#A855F7" stroke-width="1.5"/>
+                      <circle cx="54" cy="78" r="1.5" fill="#00D9FF" filter="url(#cyanGlow)"/>
+                      <rect x="28" y="60" width="10" height="15" fill="rgba(0, 217, 255, 0.2)" stroke="#00D9FF" stroke-width="1" filter="url(#cyanGlow)"/>
+                      <line x1="33" y1="60" x2="33" y2="75" stroke="#00D9FF" stroke-width="0.5"/>
+                      <line x1="28" y1="67.5" x2="38" y2="67.5" stroke="#00D9FF" stroke-width="0.5"/>
+                      <rect x="62" y="60" width="10" height="15" fill="rgba(0, 217, 255, 0.2)" stroke="#00D9FF" stroke-width="1" filter="url(#cyanGlow)"/>
+                      <line x1="67" y1="60" x2="67" y2="75" stroke="#00D9FF" stroke-width="0.5"/>
+                      <line x1="62" y1="67.5" x2="72" y2="67.5" stroke="#00D9FF" stroke-width="0.5"/>
+                      <ellipse cx="50" cy="15" rx="8" ry="3" fill="none" stroke="#A855F7" stroke-width="1.5" filter="url(#purpleGlow)"/>
+                      <line x1="50" y1="15" x2="50" y2="20" stroke="#A855F7" stroke-width="1.5"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- QUICK ACTIONS -->
+            <div class="card quick-actions">
+              <div class="card-header">
+                <h2>QUICK ACTIONS</h2>
+              </div>
+              <div class="actions-grid">
+                <button class="action-btn">
+                  <svg class="text-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  Request Electricity
+                </button>
+                <button class="action-btn">
+                  <svg class="text-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                  View Live Monitoring
+                </button>
+                <button class="action-btn">
+                  <svg class="text-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                  Transmission Status
+                </button>
+                <button class="action-btn">
+                  <svg class="text-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                  Safety Verification
+                </button>
+                <button class="action-btn">
+                  <svg class="text-purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                  Energy Analytics
+                </button>
+                <button class="action-btn">
+                  <svg class="text-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  Activity Timeline
+                </button>
+              </div>
+            </div>
           </div>
 
-          <button class="btn btn--accent" id="btn-request">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Request Electricity
+          <!-- ROW 3 LIVE METRICS -->
+          <div class="metrics-row">
+            <div class="metric-card">
+              <div class="mc-icon text-cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+              <div class="mc-info">
+                <span class="label">Voltage</span>
+                <strong class="value">229.4 V</strong>
+              </div>
+              <div class="mc-wave wave-cyan"></div>
+            </div>
+            <div class="metric-card">
+              <div class="mc-icon text-cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><path d="M9 9h6v6H9z"></path></svg></div>
+              <div class="mc-info">
+                <span class="label">Current</span>
+                <strong class="value">2.47 A</strong>
+              </div>
+              <div class="mc-wave wave-cyan"></div>
+            </div>
+            <div class="metric-card">
+              <div class="mc-icon text-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
+              <div class="mc-info">
+                <span class="label">Frequency</span>
+                <strong class="value">50.02 Hz</strong>
+              </div>
+              <div class="mc-wave wave-purple"></div>
+            </div>
+            <div class="metric-card">
+              <div class="mc-icon text-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg></div>
+              <div class="mc-info">
+                <span class="label">Power Factor</span>
+                <strong class="value">0.98</strong>
+              </div>
+              <div class="mc-wave wave-amber"></div>
+            </div>
+            <div class="metric-card">
+              <div class="mc-icon text-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path></svg></div>
+              <div class="mc-info">
+                <span class="label">Temperature</span>
+                <strong class="value">32.4 °C</strong>
+              </div>
+              <div class="mc-wave wave-red"></div>
+            </div>
+            <div class="metric-card">
+              <div class="mc-icon text-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg></div>
+              <div class="mc-info">
+                <span class="label">Signal Strength</span>
+                <strong class="value">-42 dBm</strong>
+              </div>
+              <div class="mc-wave wave-green"></div>
+          
+        </div>
+      </div>
+
+
+      <!-- SAFETY & SECURITY VIEW -->
+      <div id="view-safety" class="dashboard-scroll view" style="display: none;">
+        <div class="grid-container">
+           <div class="card">
+             <div class="card-header"><h2>SAFETY & SECURITY</h2></div>
+             <div id="safety-content" style="padding: 24px; color: var(--text-muted);">
+                <div style="margin-bottom:20px;">
+                    <span style="display:block;margin-bottom:5px;">AES-256 Encryption:</span>
+                    <strong class="text-cyan">ACTIVE & VERIFIED</strong>
+                </div>
+                <div style="margin-bottom:20px;">
+                    <span style="display:block;margin-bottom:5px;">Relay Protection State:</span>
+                    <strong class="text-green">ENGAGED</strong>
+                </div>
+                <div style="margin-bottom:20px;">
+                    <span style="display:block;margin-bottom:5px;">Voltage Safety Interlock:</span>
+                    <strong class="text-green" id="safe-volt">NORMAL</strong>
+                </div>
+             </div>
+           </div>
+        </div>
+      </div>
+
+      <!-- DEVICE & RELAY VIEW -->
+      <div id="view-device" class="dashboard-scroll view" style="display: none;">
+        <div class="grid-container">
+           <div class="card">
+             <div class="card-header"><h2>DEVICE & RELAY DIAGNOSTICS</h2></div>
+             <div id="device-content" style="padding: 24px; color: var(--text-muted);">
+                <div style="margin-bottom:20px;">
+                    <span style="display:block;margin-bottom:5px;">ESP32 Core Temperature:</span>
+                    <strong class="text-cyan" id="dev-temp">42°C</strong>
+                </div>
+                <div style="margin-bottom:20px;">
+                    <span style="display:block;margin-bottom:5px;">Relay Activation Count:</span>
+                    <strong class="text-cyan">1,204 Cycles</strong>
+                </div>
+                <div style="margin-bottom:20px;">
+                    <span style="display:block;margin-bottom:5px;">Firmware Version:</span>
+                    <strong class="text-cyan">WETA-OS v3.2.1</strong>
+                </div>
+             </div>
+           </div>
+        </div>
+      </div>
+
+      <!-- WALLET VIEW -->
+      <div id="view-wallet" class="dashboard-scroll view" style="display: none;">
+        <div class="grid-container">
+           <div class="card">
+             <div class="card-header"><h2>ENERGY WALLET</h2></div>
+             <div id="wallet-content" style="padding: 24px;"></div>
+           </div>
+        </div>
+      </div>
+
+      <!-- TIMELINE VIEW -->
+      <div id="view-timeline" class="dashboard-scroll view" style="display: none;">
+        <div class="grid-container">
+           <div class="card">
+             <div class="card-header"><h2>ACTIVITY TIMELINE</h2></div>
+             <div id="timeline-content" style="padding: 24px; color: var(--text-muted); font-family: var(--font-mono);"></div>
+           </div>
+        </div>
+      </div>
+
+      <!-- USAGE VIEW -->
+      <div id="view-usage" class="dashboard-scroll view" style="display: none;">
+        <div class="grid-container">
+           <div class="card">
+             <div class="card-header"><h2>ENERGY USAGE</h2></div>
+             <div id="usage-content" style="padding: 24px; color: var(--text-muted); font-family: var(--font-mono);"></div>
+           </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS VIEW -->
+      <div id="view-settings" class="dashboard-scroll view" style="display: none;">
+        <div class="grid-container">
+           <div class="card">
+             <div class="card-header"><h2>SYSTEM SETTINGS</h2></div>
+             <div id="settings-content" style="padding: 24px;">
+               <label style="color:var(--text-muted);">Voltage Limit (V) <input type="number" id="cfg-v" value="240" style="background:var(--bg-color); color:var(--text); border:1px solid var(--panel-border); padding:8px; margin-left:10px;"/></label><br><br>
+               <label style="color:var(--text-muted);">Current Limit (A) <input type="number" id="cfg-a" value="15" style="background:var(--bg-color); color:var(--text); border:1px solid var(--panel-border); padding:8px; margin-left:10px;"/></label><br><br>
+               <button id="btn-save-cfg" class="action-btn">Save Settings</button>
+             </div>
+           </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM SYSTEM FOOTER -->
+      <footer class="system-footer">
+        <div class="sys-item">
+          <svg class="text-green icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+          <div class="sys-text">
+            <span class="label">SAFETY STATUS</span>
+            <strong class="value text-green">SAFE</strong>
+          </div>
+        </div>
+        <div class="sys-item">
+          <svg class="text-green icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <div class="sys-text">
+            <span class="label">RELAY STATUS</span>
+            <strong class="value text-green">CLOSED</strong>
+          </div>
+        </div>
+        <div class="sys-item">
+          <svg class="text-green icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg>
+          <div class="sys-text">
+            <span class="label">CONNECTION QUALITY</span>
+            <strong class="value text-green">EXCELLENT <span class="bars"><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span></span></strong>
+          </div>
+        </div>
+        <div class="sys-item">
+          <svg class="text-green icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <div class="sys-text">
+            <span class="label">SYSTEM HEALTH</span>
+            <strong class="value">100%</strong>
+          </div>
+        </div>
+        <div class="sys-item">
+          <svg class="text-cyan icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <div class="sys-text">
+            <span class="label">UPTIME</span>
+            <strong class="value">02:45:12</strong>
+          </div>
+        </div>
+        <div class="sys-item emergency">
+          <button class="btn-emergency">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            Emergency Disconnect
           </button>
-          <button class="btn btn--outline" id="btn-submit-otp" disabled>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            Submit OTP to Grid
-          </button>
-
-          <div class="enc-bar">
-            <div class="enc-track"><div class="enc-fill" id="enc-fill"></div></div>
-            <span class="enc-text" id="enc-text">Tunnel idle</span>
-          </div>
         </div>
-      </div>
+      </footer>
+    </main>
+  </div>
 
-      <!-- ROW 2: Gauges + Relays + System -->
-      <div class="row row--bottom">
-
-        <!-- Power Gauges -->
-        <div class="card card--gauges">
-          <div class="card__header">
-            <h2 class="card__title">Power Telemetry</h2>
-          </div>
-          <div class="gauges-row">
-            <div class="gauge">
-              <div class="gauge__ring">
-                <svg viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="50" class="gauge__track"/>
-                  <circle cx="60" cy="60" r="50" class="gauge__arc gauge__arc--cyan" id="arc-v" stroke-dashoffset="314"/>
-                </svg>
-                <div class="gauge__center">
-                  <span class="gauge__value" id="g-volts">0.0</span>
-                  <span class="gauge__unit">Volts</span>
-                </div>
-              </div>
-              <span class="gauge__label">VOLTAGE</span>
-              <span class="gauge__limit">Max 240V</span>
-            </div>
-            <div class="gauge">
-              <div class="gauge__ring">
-                <svg viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="50" class="gauge__track"/>
-                  <circle cx="60" cy="60" r="50" class="gauge__arc gauge__arc--purple" id="arc-a" stroke-dashoffset="314"/>
-                </svg>
-                <div class="gauge__center">
-                  <span class="gauge__value" id="g-amps">0.00</span>
-                  <span class="gauge__unit">Amps</span>
-                </div>
-              </div>
-              <span class="gauge__label">CURRENT</span>
-              <span class="gauge__limit">Max 15A</span>
-            </div>
-            <div class="gauge">
-              <div class="gauge__ring">
-                <svg viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="50" class="gauge__track"/>
-                  <circle cx="60" cy="60" r="50" class="gauge__arc gauge__arc--amber" id="arc-w" stroke-dashoffset="314"/>
-                </svg>
-                <div class="gauge__center">
-                  <span class="gauge__value" id="g-watts">0</span>
-                  <span class="gauge__unit">Watts</span>
-                </div>
-              </div>
-              <span class="gauge__label">WATTAGE</span>
-              <span class="gauge__limit">Max 3600W</span>
-            </div>
-          </div>
-          <div class="safety-strip" id="safety-strip">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span id="safety-msg">All readings within safe limits</span>
-          </div>
-        </div>
-
-        <!-- Relay Circuit -->
-        <div class="card card--relays">
-          <div class="card__header">
-            <h2 class="card__title">Relay Isolation Circuit</h2>
-          </div>
-          <div class="relay-diagram">
-            <div class="relay-node" id="rn-grid">
-              <div class="relay-ring">
-                <svg viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="40" class="relay-ring__track"/>
-                  <circle cx="50" cy="50" r="40" class="relay-ring__fill" id="rr-grid"/>
-                </svg>
-                <span class="relay-ring__icon">⚡</span>
-              </div>
-              <span class="relay-name">Grid Relay CH1</span>
-              <span class="relay-state" id="rs-grid">LOCKED</span>
-            </div>
-            <div class="relay-bridge" id="relay-bridge">
-              <div class="bridge-line"><div class="bridge-pulse"></div></div>
-              <span class="bridge-arrow">→</span>
-            </div>
-            <div class="relay-node" id="rn-home">
-              <div class="relay-ring">
-                <svg viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="40" class="relay-ring__track"/>
-                  <circle cx="50" cy="50" r="40" class="relay-ring__fill" id="rr-home"/>
-                </svg>
-                <span class="relay-ring__icon">🏠</span>
-              </div>
-              <span class="relay-name">Home Safety</span>
-              <span class="relay-state" id="rs-home">LOCKED</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- System Monitor -->
-        <div class="card card--monitor">
-          <div class="card__header">
-            <h2 class="card__title">System Monitor</h2>
-          </div>
-
-          <div class="mon-nodes">
-            <div class="mon-node" id="mn-grid">
-              <span class="mon-dot"></span>
-              <div class="mon-meta"><span class="mon-name">Grid Server</span><span class="mon-addr">localhost:5000</span></div>
-              <span class="mon-status" id="ms-grid">OFFLINE</span>
-            </div>
-            <div class="mon-node" id="mn-home">
-              <span class="mon-dot"></span>
-              <div class="mon-meta"><span class="mon-name">Home ESP32</span><span class="mon-addr">ws://192.168.1.50</span></div>
-              <span class="mon-status" id="ms-home">OFFLINE</span>
-            </div>
-          </div>
-
-          <div class="mon-latency">
-            <span class="mon-lat-lbl">Latency</span>
-            <canvas id="spark-canvas" width="100" height="22"></canvas>
-            <span class="mon-lat-val" id="lat-val">0ms</span>
-          </div>
-
-          <div class="mon-stream">
-            <span class="mon-stream-label">Encrypted Bytestream</span>
-            <div class="stream-box" id="stream-box">Awaiting transmission...</div>
-            <div class="stream-stats">
-              <span>Packets: <strong id="st-packets">0</strong></span>
-              <span>Integrity: <strong id="st-integrity">100%</strong></span>
-            </div>
-          </div>
-
-          <div class="mon-log">
-            <span class="mon-log-label">Event Log</span>
-            <div class="log-scroll" id="log-scroll"></div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ── TAB: MARKETPLACE ── -->
-    <section class="view" id="view-market">
-      <div class="section-hero">
-        <h2>WETA Decentralized Energy Grid Marketplace</h2>
-        <p>Peer-to-peer wireless power trading. Sell excess harvested energy, purchase premium grid reserve packets, or track carbon credits securely.</p>
-      </div>
-      <div class="trio-grid">
-        <div class="card card--dark">
-          <h3 class="card__accent-title">Real-time Energy Tariff</h3>
-          <div class="tariff-big"><span class="tariff-num">$0.124</span><span class="tariff-unit">per kWh</span></div>
-          <span class="tariff-trend up">↑ 2.4% last hour</span>
-          <canvas id="tariff-chart" height="80"></canvas>
-        </div>
-        <div class="card card--dark">
-          <h3 class="card__accent-title">Active Energy Contracts</h3>
-          <div class="contract-list">
-            <div class="contract-row"><div><strong>Grid Source A Packet</strong><span>250 kWh</span></div><button class="btn btn--sm">Purchase</button></div>
-            <div class="contract-row"><div><strong>Green Hydro Pack</strong><span>80 kWh</span></div><button class="btn btn--sm">Purchase</button></div>
-            <div class="contract-row"><div><strong>Localized Peer Solar</strong><span>45 kWh</span></div><button class="btn btn--sm">Purchase</button></div>
-          </div>
-        </div>
-        <div class="card card--dark">
-          <h3 class="card__accent-title">Peer Listing Portal</h3>
-          <form class="listing-form" onsubmit="event.preventDefault()">
-            <label>Credit Quantity (kWh)<input type="number" value="50" min="1"/></label>
-            <label>Asking Price ($/kWh)<input type="number" value="0.10" step="0.01"/></label>
-            <button class="btn btn--accent" type="button">List Excess Energy Credit</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── TAB: ECO-PLANTATION ── -->
-    <section class="view" id="view-plantation">
-      <div class="section-hero">
-        <h2>WETA Electromagnetic Field (EMF) Plantation</h2>
-        <p>Harvesting waste wireless transmission energy to stimulate botanical chloroplast output. Optimizing crop growth through frequency modulation bio-resonance loops.</p>
-      </div>
-      <div class="trio-grid">
-        <div class="card card--dark">
-          <h3 class="card__accent-title">Stimulation Field Status</h3>
-          <div class="field-big"><span class="field-num">8.42</span> <span class="field-unit">V/m</span></div>
-          <p class="field-desc">Harmonic Bio-resonance Loop engaged at 15.4 kHz</p>
-          <div class="bar-meters">
-            <div class="bar-meter"><div class="bm-head"><span>Soil Moisture</span><strong>78%</strong></div><div class="bm-track"><div class="bm-fill" style="width:78%"></div></div></div>
-            <div class="bar-meter"><div class="bm-head"><span>UV Absorption</span><strong>6.2 Optimal</strong></div><div class="bm-track"><div class="bm-fill" style="width:62%"></div></div></div>
-            <div class="bar-meter"><div class="bm-head"><span>Waste Heat Recovery</span><strong>44%</strong></div><div class="bm-track"><div class="bm-fill" style="width:44%"></div></div></div>
-          </div>
-        </div>
-        <div class="card card--dark">
-          <h3 class="card__accent-title">Crop Health Telemetry</h3>
-          <div class="crop-list">
-            <div class="crop-item"><span class="crop-emoji">🌱</span><div><strong>EMF Lettuce Pod A</strong><span>Growth speed: <em class="text-green">+42%</em></span></div></div>
-            <div class="crop-item"><span class="crop-emoji">🌿</span><div><strong>EMF Tomato Pod B</strong><span>Growth speed: <em class="text-green">+35%</em></span></div></div>
-            <div class="crop-item"><span class="crop-emoji">🍀</span><div><strong>EMF Basil Pod C</strong><span>Growth speed: <em class="text-green">+48%</em></span></div></div>
-          </div>
-        </div>
-        <div class="card card--dark">
-          <h3 class="card__accent-title">Field Calibration</h3>
-          <div class="cal-form">
-            <label>EMF Pulse Frequency
-              <select><option>15.4 kHz (Chlorella)</option><option>22.1 kHz (Solanum)</option><option>8.8 kHz (Germination)</option></select>
-            </label>
-            <div class="cal-toggle"><span>Auto Solar Drip</span><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
-            <button class="btn btn--outline" id="btn-drip">Force 30s Irrigation Pulse</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ═══ FOOTER ═══ -->
-  <footer class="footer">
-    <span>WETA Node B Terminal • <strong>v3.0.0</strong></span>
-    <span>Development Team: <strong>Aditya Raj</strong> & Co-Inventor <strong>Deepak Kumar Gupta</strong></span>
-  </footer>
-
-  <!-- ═══ SETTINGS SIDEBAR ═══ -->
-  <div class="overlay" id="overlay-settings">
-    <div class="sidebar">
-      <div class="sidebar__head"><h3>Configuration</h3><button class="close-x" id="btn-close-settings">✕</button></div>
-      <div class="sidebar__body">
-        <div class="sb-section">
-          <h4>Safety Thresholds</h4>
-          <label class="range-row">Voltage Limit<div class="range-wrap"><input type="range" id="cfg-v" min="100" max="440" value="240"/><span id="cfg-v-val">240V</span></div></label>
-          <label class="range-row">Current Limit<div class="range-wrap"><input type="range" id="cfg-a" min="1" max="30" value="15"/><span id="cfg-a-val">15A</span></div></label>
-          <label class="range-row">Wattage Limit<div class="range-wrap"><input type="range" id="cfg-w" min="500" max="10000" step="100" value="3600"/><span id="cfg-w-val">3600W</span></div></label>
-        </div>
-        <div class="sb-section">
-          <h4>Audio</h4>
-          <div class="cal-toggle"><span>Enable Sound FX</span><label class="toggle"><input type="checkbox" id="cfg-audio" checked/><span class="toggle-slider"></span></label></div>
-        </div>
-        <div class="sb-section sb-actions">
-          <button class="btn btn--danger" id="btn-estop">Emergency Stop</button>
-          <button class="btn btn--outline" id="btn-reset-cfg">Reset Defaults</button>
-        </div>
+  <!-- OTP MODAL -->
+  <div id="modal-otp" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center;">
+    <div class="card" style="width: 400px; box-shadow: 0 0 30px rgba(0,217,255,0.2);">
+      <div class="card-header"><h2>AUTHORIZATION REQUIRED</h2></div>
+      <div style="padding: 24px; text-align: center;">
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Enter the 6-digit AES-256 key provided by the grid.</p>
+        <input type="text" id="otp-input" maxlength="6" style="background: var(--bg-color); color: var(--cyan); border: 1px solid var(--cyan); font-size: 24px; text-align: center; letter-spacing: 10px; width: 100%; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
+        <button id="btn-submit-otp" class="action-btn" style="width: 100%; justify-content: center; background: rgba(0,217,255,0.1); border-color: var(--cyan); color: var(--cyan);">Verify & Connect</button>
       </div>
     </div>
   </div>
 
-  <!-- ═══ OTP INPUT MODAL ═══ -->
-  <div class="overlay" id="overlay-otp">
-    <div class="modal">
-      <span class="modal__tag">🔒 SECURE CORRIDOR</span>
-      <h3>Enter Handshake Code</h3>
-      <p>Type the 6-digit OTP shown on the Grid Control Center to authenticate the power corridor.</p>
-      <input class="otp-field" id="otp-field" type="text" maxlength="6" placeholder="••••••" autocomplete="off"/>
-      <div class="modal__actions">
-        <button class="btn btn--accent" id="btn-verify">Verify & Activate</button>
-        <button class="btn btn--ghost" id="btn-cancel-otp">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ OVERLOAD MODAL ═══ -->
-  <div class="overlay overlay--danger" id="overlay-overload">
-    <div class="modal modal--danger">
-      <span class="modal__tag modal__tag--danger">⚠️ SAFETY TRIP</span>
-      <h3>Critical Overload Shutoff</h3>
-      <p id="ol-desc">Electrical readings exceeded safe thresholds. Isolation relay disengaged.</p>
-      <div class="ol-grid">
-        <div class="ol-cell"><span>Voltage</span><strong id="ol-v">0V</strong></div>
-        <div class="ol-cell"><span>Current</span><strong id="ol-a">0A</strong></div>
-        <div class="ol-cell"><span>Wattage</span><strong id="ol-w">0W</strong></div>
-      </div>
-      <button class="btn btn--danger" id="btn-ack-ol">Acknowledge & Reset</button>
-    </div>
-  </div>
-
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
