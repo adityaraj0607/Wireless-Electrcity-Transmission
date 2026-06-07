@@ -1,0 +1,6 @@
+Flask
+Flask-SocketIO
+Flask-Cors
+python-socketio
+websocket-client
+requests
