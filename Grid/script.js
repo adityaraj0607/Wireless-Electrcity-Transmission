@@ -70,6 +70,7 @@
     alertCenterBody: $('alert-center-body'),
     alertEmptyMsg: $('alert-empty-msg'),
     gridUptime: $('grid-uptime'),
+    gridPulseDot: $('grid-pulse-dot'),
     modal: $('modal-ov'),
     mSrc: $('m-src'),
     mTime: $('m-time'),
@@ -254,93 +255,42 @@
     });
 
     socket.on('connect', () => {
-      S.connected = true;
+      S.wsConnected = true;
       D.wsBadge.classList.remove('disconnected');
-      D.wsLabel.textContent = 'CONNECTED';
-      addLog('Socket.IO grid control channel successfully synced.', 'green');
+      D.wsLabel.textContent = 'SERVER LINKED';
+      addLog('Socket.IO server link established. Checking for ESP32 hardware...', 'cyan');
       socket.emit('join', { room: 'grid' });
-      Sound.success();
-      syncHUD();
+      socket.emit('request_state');
+      // Do NOT set S.connected=true here. Wait for state_sync to confirm ESP32 is online.
     });
 
     socket.on('disconnect', () => {
       S.connected = false;
-      addLog('Lost connection to dispatch server.', 'red');
+      S.wsConnected = false;
+      D.wsBadge.classList.add('disconnected');
+      D.wsLabel.textContent = 'DISCONNECTED';
+      addLog('Bridge link severed. Retrying connections...', 'red');
+      Sound.beep(300, 0.3, 'sawtooth');
       syncHUD();
     });
 
-    // ==========================================
-    // DIRECT ESP32 HARDWARE WEBSOCKET CONNECTION
-    // ==========================================
-    const espWsUrl = 'ws://192.168.81.98:81/';
-    let espWs = new WebSocket(espWsUrl);
-
-    espWs.onopen = () => {
-      S.espConnected = true;
-      S.connected = true; // Override UI state to show online
-      addLog('Direct hardware link to ESP32 established (192.168.81.98)', 'green');
-      syncHUD();
-    };
-
-    espWs.onclose = () => {
-      S.espConnected = false;
-      addLog('Hardware link to ESP32 lost. Reconnecting...', 'amber');
-      syncHUD();
-      setTimeout(() => {
-        espWs = new WebSocket(espWsUrl);
-      }, 5000);
-    };
-
-    espWs.onmessage = (event) => {
-      const msg = event.data;
-      if (msg.includes("POWER_ON")) {
-        // Trigger transmission UI
-        S.activeChannel = 1;
-        S.ch1 = true;
-        addLog(`Wireless corridor established on channel 1 (Hardware Trigger)!`, 'green');
-        Sound.startHum();
-        updateRelayControls();
-        syncHUD();
-        
-        // Populate fake telemetry to show it's working since ESP only sends simple string
-        const fakeKw = (Math.random() * 2 + 10).toFixed(2);
-        if (D.pwrWattage) D.pwrWattage.textContent = `${(fakeKw * 1000).toFixed(0)} W`;
-        if (D.gridCurrentLoad) D.gridCurrentLoad.textContent = `${fakeKw} kW`;
-        if (D.gridHealthPct) D.gridHealthPct.textContent = '99.2%';
-        if (D.gridHealthLabel) { D.gridHealthLabel.textContent = 'EXCELLENT'; D.gridHealthLabel.style.color = '#00ff88'; }
-        
-        if (D.sessionTableBody) {
-          const empty = D.sessionTableBody.querySelector('td[colspan]');
-          if (empty) empty.parentElement.remove();
-          if (!document.getElementById('session-ch1')) {
-            const tr = document.createElement('tr');
-            tr.style.borderBottom = '1px solid rgba(255,255,255,0.03)';
-            tr.id = `session-ch1`;
-            tr.innerHTML = `<td style="padding:6px 0;color:#c9d1d9;">HOME-ESP</td><td style="padding:6px 0;color:#2F7BFF;">CH 1</td><td style="padding:6px 0;color:#e2e8f0;" class="sess-power">${(fakeKw * 1000).toFixed(0)} W</td><td style="padding:6px 0;color:#a0abc0;" class="sess-duration">00:00:00</td><td style="padding:6px 0;"><span style="color:#00ff88;font-weight:700;">ACTIVE</span></td><td style="padding:6px 0;"><button class="btn-dots">...</button></td>`;
-            D.sessionTableBody.appendChild(tr);
-          }
-        }
-        addAlert('Transmission Started', `Hardware node activated power`, 'green', 'INFO');
-      } else if (msg.includes("POWER_OFF")) {
-        S.ch1 = false;
-        S.activeChannel = null;
-        addLog(`Hardware transmission terminated.`, 'amber');
-        Sound.stopHum();
-        updateRelayControls();
-        syncHUD();
-        
-        if (D.pwrWattage) D.pwrWattage.textContent = `0 W`;
-        if (D.gridCurrentLoad) D.gridCurrentLoad.textContent = `0.00 kW`;
-        
-        if (D.sessionTableBody) {
-          D.sessionTableBody.innerHTML = '<tr><td colspan="6" style="padding:20px 0;color:#586069;text-align:center;font-style:italic;">No active sessions \u2014 waiting for hardware</td></tr>';
-        }
-        addAlert('Transmission Halted', 'Hardware power off', 'amber', 'WARNING');
-      }
-    };
-    // ==========================================
-
     socket.on('state_sync', data => {
+      // Determine real hardware presence from server state
+      const espOnline = data.grid.esp === true;
+      const wasConnected = S.connected;
+      S.connected = espOnline;
+      
+      if (espOnline && !wasConnected) {
+        D.wsLabel.textContent = 'ESP32 ONLINE';
+        addLog('ESP32 Grid hardware detected and connected!', 'green');
+        Sound.success();
+      } else if (!espOnline && wasConnected) {
+        D.wsLabel.textContent = 'ESP32 OFFLINE';
+        addLog('ESP32 Grid hardware disconnected.', 'red');
+      } else if (!espOnline) {
+        D.wsLabel.textContent = 'AWAITING ESP32';
+      }
+      
       S.ch1 = data.grid.ch1;
       S.ch2 = data.grid.ch2;
       
@@ -353,9 +303,22 @@
       S.activeChannel = data.grid.channel;
       if (data.otp && data.otp.code) S.otp = data.otp.code;
       
-      D.pwrVoltage.textContent = `${data.power.voltage} V`;
-      D.pwrCurrent.textContent = `${data.power.current} A`;
-      D.pwrWattage.textContent = `${data.power.wattage} W`;
+      // Update power readings from server state (only if ESP connected)
+      if (espOnline) {
+        D.pwrVoltage.textContent = `${data.power.voltage} V`;
+        D.pwrCurrent.textContent = `${data.power.current} A`;
+        D.pwrWattage.textContent = `${data.power.wattage} W`;
+      } else {
+        // ESP offline: zero everything
+        D.pwrVoltage.textContent = '0.0 V';
+        D.pwrCurrent.textContent = '0.0 A';
+        D.pwrWattage.textContent = '0.0 W';
+        if (D.pwrFreq) D.pwrFreq.textContent = '0.0 Hz';
+        const hdrPwr = $('pwr-wattage');
+        if (hdrPwr) hdrPwr.textContent = '0.0 W';
+        if (D.gridCurrentLoad) D.gridCurrentLoad.textContent = '0.00 kW';
+        if (D.gridAvailCap) D.gridAvailCap.textContent = '0.00 kW';
+      }
 
       updateRelayControls();
       syncHUD();
@@ -1205,6 +1168,13 @@
       if (D.topoH203) { D.topoH203.textContent = 'ONLINE'; D.topoH203.style.color = '#00ff88'; }
       if (D.gridOnlineStatus) { D.gridOnlineStatus.innerHTML = '<span style="color:#00ff88;">GRID ONLINE</span>'; D.gridOnlineStatus.style.textShadow = '0 0 10px rgba(0,255,136,0.3)'; }
       if (D.gridOnlineSub) D.gridOnlineSub.textContent = 'System operating normally';
+      if (D.gridPulseDot) { D.gridPulseDot.style.background = '#00ff88'; D.gridPulseDot.style.boxShadow = '0 0 12px #00ff88'; }
+      // Update grid health ring to green
+      const ringPath = document.querySelector('.gh-ring-path');
+      if (ringPath) { ringPath.setAttribute('stroke', '#00ff88'); ringPath.style.filter = 'drop-shadow(0 0 6px #00ff88)'; }
+      // Update v-conn header bar
+      D.vConn.textContent = 'ONLINE';
+      D.vConn.className = 'metric__val v-on';
       // Header stats
       let nodeCount = 1; // grid node itself
       if (S.ch1) nodeCount++;
@@ -1230,6 +1200,13 @@
       if (D.topoH203) { D.topoH203.textContent = 'OFFLINE'; D.topoH203.style.color = '#ffaa00'; }
       if (D.gridOnlineStatus) { D.gridOnlineStatus.innerHTML = '<span style="color:#ffaa00;">GRID OFFLINE</span>'; D.gridOnlineStatus.style.textShadow = '0 0 10px rgba(255,170,0,0.3)'; }
       if (D.gridOnlineSub) D.gridOnlineSub.textContent = 'Waiting for hardware connection';
+      if (D.gridPulseDot) { D.gridPulseDot.style.background = '#ffaa00'; D.gridPulseDot.style.boxShadow = '0 0 12px #ffaa00'; }
+      // Grey out grid health ring
+      const ringPath2 = document.querySelector('.gh-ring-path');
+      if (ringPath2) { ringPath2.setAttribute('stroke', '#586069'); ringPath2.style.filter = 'none'; }
+      // Update v-conn header bar
+      D.vConn.textContent = 'OFFLINE';
+      D.vConn.className = 'metric__val v-off';
       // Header stats reset
       if (D.hdrConnNodes) D.hdrConnNodes.textContent = '0';
       if (D.hdrConnTrend) { D.hdrConnTrend.textContent = '--'; D.hdrConnTrend.className = 'cm-trend text-dim'; }
