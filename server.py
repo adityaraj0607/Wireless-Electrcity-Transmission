@@ -3,7 +3,7 @@ WIRELESS ELECTRICITY TRANSMISSION — MASTER CONTROL SERVER
 Flask-SocketIO Bridge: Grid <-> Home <-> ESP32
 Inventors: Aditya Raj & Deepak Kumar Gupta | v3.0
 """
-import os, json, time, secrets, threading, random, sqlite3
+import os, json, time, secrets, threading, random, sqlite3, requests
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_socketio import SocketIO, emit, join_room, leave_room
@@ -594,6 +594,95 @@ def watchdog_loop():
                     socketio.emit('transmission_stop', {}, room='home')
                 broadcast_state()
 
+# ═══ ESP32 HTTP TELEMETRY ENDPOINT ═══
+# If ESP32 can reach the server via HTTP POST instead of WebSocket
+@app.route('/api/esp-telemetry', methods=['POST'])
+def api_esp_telemetry():
+    d = request.json or {}
+    S.grid_esp = True
+    S.voltage = d.get('voltage', S.voltage)
+    S.current = d.get('current', S.current)
+    S.wattage = d.get('wattage', S.wattage)
+    S.freq = d.get('frequency', S.freq)
+    
+    t = {
+        'voltage': round(S.voltage, 1),
+        'current': round(S.current, 2),
+        'wattage': round(S.wattage, 0),
+        'frequency': round(S.freq, 2),
+        'ts': time.time()
+    }
+    db_log_telemetry(S.voltage, S.current, S.wattage, S.freq)
+    socketio.emit('telemetry_update', t, room='grid')
+    socketio.emit('telemetry_update', t, room='home')
+    broadcast_state()
+    return jsonify({'status': 'ok'})
+
+@app.route('/api/esp-heartbeat', methods=['POST', 'GET'])
+def api_esp_heartbeat():
+    """ESP32 calls this to register itself as online"""
+    S.grid_esp = True
+    broadcast_state()
+    return jsonify({'status': 'online', 'server_time': time.time()})
+
+# ═══ ESP32 AUTO-DISCOVERY POLLER ═══
+ESP32_GRID_IP = '192.168.81.98'
+ESP32_POLL_INTERVAL = 3  # seconds
+
+def esp32_poller():
+    """Background thread that pings ESP32 to check if it's alive on the network"""
+    import subprocess, socket
+    consecutive_fails = 0
+    was_online = False
+    while True:
+        time.sleep(ESP32_POLL_INTERVAL)
+        alive = False
+        try:
+            # Method 1: Subprocess ping (works on Windows)
+            result = subprocess.run(
+                ['ping', '-n', '1', '-w', '1500', ESP32_GRID_IP],
+                capture_output=True, text=True, timeout=3
+            )
+            if 'TTL=' in result.stdout.upper():
+                alive = True
+        except:
+            pass
+        
+        if not alive:
+            # Method 2: Try raw socket connection on common ESP32 ports
+            for port in [80, 81, 8080]:
+                try:
+                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    s.settimeout(1.5)
+                    s.connect((ESP32_GRID_IP, port))
+                    s.close()
+                    alive = True
+                    break
+                except:
+                    pass
+        
+        if alive:
+            consecutive_fails = 0
+            if not S.grid_esp:
+                S.grid_esp = True
+                print(f"[ESP32 POLLER] ✓ Grid ESP32 detected at {ESP32_GRID_IP}!")
+                db_log_event("ESP_CONNECT", f"Grid ESP32 detected at {ESP32_GRID_IP}")
+                broadcast_state()
+            elif not was_online:
+                broadcast_state()
+            was_online = True
+        else:
+            consecutive_fails += 1
+            if consecutive_fails >= 3 and S.grid_esp:
+                print(f"[ESP32 POLLER] ✗ Grid ESP32 at {ESP32_GRID_IP} unreachable. Marking offline.")
+                S.grid_esp = False
+                was_online = False
+                if S.tx_active:
+                    S.stop_tx("ESP Unreachable")
+                    socketio.emit('transmission_halted', {'reason': 'ESP32 Unreachable'}, room='grid')
+                    socketio.emit('transmission_stop', {}, room='home')
+                broadcast_state()
+
 if __name__ == '__main__':
     threading.Thread(target=watchdog_loop, daemon=True).start()
 
@@ -602,6 +691,8 @@ if __name__ == '__main__':
     print("=" * 60)
     print(f"  Grid: http://localhost:5000/grid")
     print(f"  Home: http://localhost:5000/home")
+    print(f"  ESP32 Grid Target: {ESP32_GRID_IP}")
     print("=" * 60 + "\n")
     # Production Watchdog handles timeouts instead of simulations
+    threading.Thread(target=esp32_poller, daemon=True).start()
     socketio.run(app, host='0.0.0.0', port=5000, debug=False, allow_unsafe_werkzeug=True)

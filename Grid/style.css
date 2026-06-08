@@ -3058,14 +3058,15 @@ body.no-scanlines .crt-overlay {
   gap: 16px !important;
   height: 100% !important;
   min-height: 0 !important;
-  overflow: hidden !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 
 .top-row-grid {
   display: flex !important;
   gap: 16px !important;
-  flex: 1.5 !important;
-  min-height: 0 !important;
+  flex: 3 0 450px !important;
+  min-height: 450px !important;
 }
 
 .left-col {
@@ -3074,6 +3075,7 @@ body.no-scanlines .crt-overlay {
   flex-direction: column !important;
   gap: 16px !important;
   min-height: 0 !important;
+  overflow: hidden !important;
 }
 
 .right-col {
@@ -3081,14 +3083,15 @@ body.no-scanlines .crt-overlay {
   display: flex !important;
   flex-direction: column !important;
   min-height: 0 !important;
+  overflow: hidden !important;
 }
 
 .bottom-row-grid {
   display: grid !important;
   grid-template-columns: 1.2fr 1.2fr 1fr !important;
   gap: 16px !important;
-  flex: 1 !important;
-  min-height: 0 !important;
+  flex: 1 0 250px !important;
+  min-height: 250px !important;
 }
 
 .topo-node-card {

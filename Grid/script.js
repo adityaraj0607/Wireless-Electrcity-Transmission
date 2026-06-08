@@ -47,6 +47,30 @@
     pwrVoltage: $('pwr-voltage'),
     pwrCurrent: $('pwr-current'),
     pwrWattage: $('pwr-wattage'),
+    pwrFreq: $('pwr-frequency'),
+    gridAvailCap: $('grid-avail-cap'),
+    gridCurrentLoad: $('pwr-wattage-kpi'),
+    gridActiveSessions: $('grid-active-sessions'),
+    topoGrid: $('topo-status-grid'),
+    topoR1: $('topo-status-r1'),
+    topoR2: $('topo-status-r2'),
+    topoH101: $('topo-status-h101'),
+    topoH117: $('topo-status-h117'),
+    topoH203: $('topo-status-h203'),
+    gridOnlineStatus: $('grid-online-status'),
+    gridOnlineSub: $('grid-online-sub'),
+    hdrConnNodes: $('hdr-conn-nodes'),
+    hdrConnTrend: $('hdr-conn-trend'),
+    hdrActiveConsumers: $('hdr-active-consumers'),
+    hdrConsumerTrend: $('hdr-consumer-trend'),
+    gridHealthPct: $('grid-health-pct'),
+    gridHealthLabel: $('grid-health-label'),
+    gridSecurityPct: $('grid-security-pct'),
+    sessionTableBody: $('session-table-body'),
+    alertCenterBody: $('alert-center-body'),
+    alertEmptyMsg: $('alert-empty-msg'),
+    gridUptime: $('grid-uptime'),
+    gridPulseDot: $('grid-pulse-dot'),
     modal: $('modal-ov'),
     mSrc: $('m-src'),
     mTime: $('m-time'),
@@ -231,17 +255,18 @@
     });
 
     socket.on('connect', () => {
-      S.connected = true;
+      S.wsConnected = true;
       D.wsBadge.classList.remove('disconnected');
-      D.wsLabel.textContent = 'CONNECTED';
-      addLog('Socket.IO grid control channel successfully synced.', 'green');
+      D.wsLabel.textContent = 'SERVER LINKED';
+      addLog('Socket.IO server link established. Checking for ESP32 hardware...', 'cyan');
       socket.emit('join', { room: 'grid' });
-      Sound.success();
-      syncHUD();
+      socket.emit('request_state');
+      // Do NOT set S.connected=true here. Wait for state_sync to confirm ESP32 is online.
     });
 
     socket.on('disconnect', () => {
       S.connected = false;
+      S.wsConnected = false;
       D.wsBadge.classList.add('disconnected');
       D.wsLabel.textContent = 'DISCONNECTED';
       addLog('Bridge link severed. Retrying connections...', 'red');
@@ -250,15 +275,50 @@
     });
 
     socket.on('state_sync', data => {
+      // Determine real hardware presence from server state
+      const espOnline = data.grid.esp === true;
+      const wasConnected = S.connected;
+      S.connected = espOnline;
+      
+      if (espOnline && !wasConnected) {
+        D.wsLabel.textContent = 'ESP32 ONLINE';
+        addLog('ESP32 Grid hardware detected and connected!', 'green');
+        Sound.success();
+      } else if (!espOnline && wasConnected) {
+        D.wsLabel.textContent = 'ESP32 OFFLINE';
+        addLog('ESP32 Grid hardware disconnected.', 'red');
+      } else if (!espOnline) {
+        D.wsLabel.textContent = 'AWAITING ESP32';
+      }
+      
       S.ch1 = data.grid.ch1;
       S.ch2 = data.grid.ch2;
+      
+      // Update active sessions based on connected channels
+      let activeSess = 0;
+      if (S.ch1) activeSess++;
+      if (S.ch2) activeSess++;
+      if (D.gridActiveSessions) D.gridActiveSessions.textContent = activeSess.toString();
       S.pending = data.pending;
       S.activeChannel = data.grid.channel;
       if (data.otp && data.otp.code) S.otp = data.otp.code;
       
-      D.pwrVoltage.textContent = `${data.power.voltage} V`;
-      D.pwrCurrent.textContent = `${data.power.current} A`;
-      D.pwrWattage.textContent = `${data.power.wattage} W`;
+      // Update power readings from server state (only if ESP connected)
+      if (espOnline) {
+        D.pwrVoltage.textContent = `${data.power.voltage} V`;
+        D.pwrCurrent.textContent = `${data.power.current} A`;
+        D.pwrWattage.textContent = `${data.power.wattage} W`;
+      } else {
+        // ESP offline: zero everything
+        D.pwrVoltage.textContent = '0.0 V';
+        D.pwrCurrent.textContent = '0.0 A';
+        D.pwrWattage.textContent = '0.0 W';
+        if (D.pwrFreq) D.pwrFreq.textContent = '0.0 Hz';
+        const hdrPwr = $('pwr-wattage');
+        if (hdrPwr) hdrPwr.textContent = '0.0 W';
+        if (D.gridCurrentLoad) D.gridCurrentLoad.textContent = '0.00 kW';
+        if (D.gridAvailCap) D.gridAvailCap.textContent = '0.00 kW';
+      }
 
       updateRelayControls();
       syncHUD();
@@ -280,9 +340,41 @@
     });
 
     socket.on('telemetry_update', data => {
-      D.pwrVoltage.textContent = `${data.voltage} V`;
-      D.pwrCurrent.textContent = `${data.current} A`;
-      D.pwrWattage.textContent = `${data.wattage} W`;
+      if (D.pwrVoltage) D.pwrVoltage.textContent = `${data.voltage} V`;
+      if (D.pwrCurrent) D.pwrCurrent.textContent = `${data.current} A`;
+      if (D.pwrWattage) D.pwrWattage.textContent = `${data.wattage} W`;
+      if (D.pwrFreq && data.frequency) D.pwrFreq.textContent = `${data.frequency.toFixed(2)} Hz`;
+      
+      // Update header power transfer
+      const hdrPwr = $('pwr-wattage');
+      if (hdrPwr) hdrPwr.textContent = `${data.wattage} W`;
+      
+      // Update overview load stats
+      let kw = data.wattage / 1000;
+      if (data.wattage > 0) {
+        if (D.gridCurrentLoad) D.gridCurrentLoad.textContent = `${kw.toFixed(2)} kW`;
+        if (D.gridAvailCap) D.gridAvailCap.textContent = `${(50.0 - kw).toFixed(2)} kW`;
+      } else {
+        if (D.gridCurrentLoad) D.gridCurrentLoad.textContent = `0.00 kW`;
+        if (D.gridAvailCap) D.gridAvailCap.textContent = `50.00 kW`;
+      }
+      
+      // Update grid health based on real voltage stability
+      if (D.gridHealthPct && D.gridHealthLabel) {
+        let health = 100;
+        if (data.voltage > 250) health -= (data.voltage - 250) * 2;
+        if (data.voltage < 200 && data.voltage > 0) health -= (200 - data.voltage) * 2;
+        health = Math.max(0, Math.min(100, health));
+        D.gridHealthPct.textContent = `${health.toFixed(1)}%`;
+        if (health >= 90) { D.gridHealthLabel.textContent = 'EXCELLENT'; D.gridHealthLabel.style.color = '#00ff88'; }
+        else if (health >= 70) { D.gridHealthLabel.textContent = 'GOOD'; D.gridHealthLabel.style.color = '#FFB020'; }
+        else { D.gridHealthLabel.textContent = 'WARNING'; D.gridHealthLabel.style.color = '#FF4D4D'; }
+      }
+      
+      // Update security based on connection
+      if (D.gridSecurityPct) {
+        D.gridSecurityPct.textContent = S.connected ? '100%' : '--%';
+      }
     });
 
     socket.on('transmission_active', data => {
@@ -293,6 +385,21 @@
       Sound.startHum();
       updateRelayControls();
       syncHUD();
+      
+      // Add real session row to table
+      if (D.sessionTableBody) {
+        const empty = D.sessionTableBody.querySelector('td[colspan]');
+        if (empty) empty.parentElement.remove();
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid rgba(255,255,255,0.03)';
+        tr.id = `session-ch${data.channel}`;
+        const chColor = data.channel === 1 ? '#2F7BFF' : '#a855f7';
+        tr.innerHTML = `<td style="padding:6px 0;color:#c9d1d9;">HOME-ESP</td><td style="padding:6px 0;color:${chColor};">CH ${data.channel}</td><td style="padding:6px 0;color:#e2e8f0;" class="sess-power">${data.voltage || 0} W</td><td style="padding:6px 0;color:#a0abc0;" class="sess-duration">00:00:00</td><td style="padding:6px 0;"><span style="color:#00ff88;font-weight:700;">ACTIVE</span></td><td style="padding:6px 0;"><button class="btn-dots">...</button></td>`;
+        D.sessionTableBody.appendChild(tr);
+      }
+      
+      // Add real alert
+      addAlert('Transmission Started', `Channel ${data.channel} activated`, 'green', 'INFO');
     });
 
     socket.on('transmission_halted', data => {
@@ -303,6 +410,14 @@
       Sound.stopHum();
       updateRelayControls();
       syncHUD();
+      
+      // Clear session table
+      if (D.sessionTableBody) {
+        D.sessionTableBody.innerHTML = '<tr><td colspan="6" style="padding:20px 0;color:#586069;text-align:center;font-style:italic;">No active sessions \u2014 waiting for hardware</td></tr>';
+      }
+      
+      // Add alert for halt
+      addAlert('Transmission Halted', data.reason, 'red', 'CRITICAL');
     });
 
     socket.on('relay_state_update', data => {
@@ -1046,12 +1161,60 @@
       D.vConn.textContent = 'ONLINE';
       D.vConn.className = 'metric__val v-on';
       D.dConn.textContent = 'Bridge Connection Active';
+      
+      if (D.topoGrid) { D.topoGrid.textContent = 'ONLINE'; D.topoGrid.style.color = '#00ff88'; }
+      if (D.topoH101) { D.topoH101.textContent = 'ONLINE'; D.topoH101.style.color = '#00ff88'; }
+      if (D.topoH117) { D.topoH117.textContent = 'ONLINE'; D.topoH117.style.color = '#00ff88'; }
+      if (D.topoH203) { D.topoH203.textContent = 'ONLINE'; D.topoH203.style.color = '#00ff88'; }
+      if (D.gridOnlineStatus) { D.gridOnlineStatus.innerHTML = '<span style="color:#00ff88;">GRID ONLINE</span>'; D.gridOnlineStatus.style.textShadow = '0 0 10px rgba(0,255,136,0.3)'; }
+      if (D.gridOnlineSub) D.gridOnlineSub.textContent = 'System operating normally';
+      if (D.gridPulseDot) { D.gridPulseDot.style.background = '#00ff88'; D.gridPulseDot.style.boxShadow = '0 0 12px #00ff88'; }
+      // Update grid health ring to green
+      const ringPath = document.querySelector('.gh-ring-path');
+      if (ringPath) { ringPath.setAttribute('stroke', '#00ff88'); ringPath.style.filter = 'drop-shadow(0 0 6px #00ff88)'; }
+      // Update v-conn header bar
+      D.vConn.textContent = 'ONLINE';
+      D.vConn.className = 'metric__val v-on';
+      // Header stats
+      let nodeCount = 1; // grid node itself
+      if (S.ch1) nodeCount++;
+      if (S.ch2) nodeCount++;
+      if (D.hdrConnNodes) D.hdrConnNodes.textContent = nodeCount.toString();
+      if (D.hdrConnTrend) { D.hdrConnTrend.textContent = 'live'; D.hdrConnTrend.className = 'cm-trend text-green'; }
+      let consCount = 0;
+      if (S.ch1) consCount++;
+      if (S.ch2) consCount++;
+      if (D.hdrActiveConsumers) D.hdrActiveConsumers.textContent = consCount.toString();
+      if (D.hdrConsumerTrend) { D.hdrConsumerTrend.textContent = 'live'; D.hdrConsumerTrend.className = 'cm-trend text-green'; }
+      if (D.gridSecurityPct) D.gridSecurityPct.textContent = '100%';
     } else {
       D.hStatus.classList.add('offline');
       D.sLabel.textContent = 'Offline';
       D.vConn.textContent = 'OFFLINE';
       D.vConn.className = 'metric__val v-off';
       D.dConn.textContent = 'Bridge Link Disconnected';
+
+      if (D.topoGrid) { D.topoGrid.textContent = 'OFFLINE'; D.topoGrid.style.color = '#ffaa00'; }
+      if (D.topoH101) { D.topoH101.textContent = 'OFFLINE'; D.topoH101.style.color = '#ffaa00'; }
+      if (D.topoH117) { D.topoH117.textContent = 'OFFLINE'; D.topoH117.style.color = '#ffaa00'; }
+      if (D.topoH203) { D.topoH203.textContent = 'OFFLINE'; D.topoH203.style.color = '#ffaa00'; }
+      if (D.gridOnlineStatus) { D.gridOnlineStatus.innerHTML = '<span style="color:#ffaa00;">GRID OFFLINE</span>'; D.gridOnlineStatus.style.textShadow = '0 0 10px rgba(255,170,0,0.3)'; }
+      if (D.gridOnlineSub) D.gridOnlineSub.textContent = 'Waiting for hardware connection';
+      if (D.gridPulseDot) { D.gridPulseDot.style.background = '#ffaa00'; D.gridPulseDot.style.boxShadow = '0 0 12px #ffaa00'; }
+      // Grey out grid health ring
+      const ringPath2 = document.querySelector('.gh-ring-path');
+      if (ringPath2) { ringPath2.setAttribute('stroke', '#586069'); ringPath2.style.filter = 'none'; }
+      // Update v-conn header bar
+      D.vConn.textContent = 'OFFLINE';
+      D.vConn.className = 'metric__val v-off';
+      // Header stats reset
+      if (D.hdrConnNodes) D.hdrConnNodes.textContent = '0';
+      if (D.hdrConnTrend) { D.hdrConnTrend.textContent = '--'; D.hdrConnTrend.className = 'cm-trend text-dim'; }
+      if (D.hdrActiveConsumers) D.hdrActiveConsumers.textContent = '0';
+      if (D.hdrConsumerTrend) { D.hdrConsumerTrend.textContent = '--'; D.hdrConsumerTrend.className = 'cm-trend text-dim'; }
+      if (D.gridSecurityPct) D.gridSecurityPct.textContent = '--%';
+      if (D.gridHealthPct) D.gridHealthPct.textContent = '--%';
+      if (D.gridHealthLabel) { D.gridHealthLabel.textContent = 'AWAITING DATA'; D.gridHealthLabel.style.color = '#586069'; }
     }
 
     // 2. Channel 1 State
@@ -1062,6 +1225,7 @@
       D.ch1State.textContent = 'ACTIVE';
       D.ch1State.className = 'viewport__ch-state active';
       D.ch1Label.querySelector('.viewport__ch-dot').classList.add('active-ch1');
+      if (D.topoR1) { D.topoR1.textContent = 'ACTIVE'; D.topoR1.style.color = '#00ff88'; }
     } else {
       D.vRelayCh1.textContent = 'DISENGAGED';
       D.vRelayCh1.className = 'metric__val v-idle';
@@ -1069,6 +1233,7 @@
       D.ch1State.textContent = 'IDLE';
       D.ch1State.className = 'viewport__ch-state';
       D.ch1Label.querySelector('.viewport__ch-dot').classList.remove('active-ch1');
+      if (D.topoR1) { D.topoR1.textContent = 'STANDBY'; D.topoR1.style.color = '#ffaa00'; }
     }
 
     // 3. Channel 2 State
@@ -1079,6 +1244,7 @@
       D.ch2State.textContent = 'ACTIVE';
       D.ch2State.className = 'viewport__ch-state active';
       D.ch2Label.querySelector('.viewport__ch-dot').classList.add('active-ch2');
+      if (D.topoR2) { D.topoR2.textContent = 'ACTIVE'; D.topoR2.style.color = '#00ff88'; }
     } else {
       D.vRelayCh2.textContent = 'DISENGAGED';
       D.vRelayCh2.className = 'metric__val v-idle';
@@ -1086,6 +1252,7 @@
       D.ch2State.textContent = 'IDLE';
       D.ch2State.className = 'viewport__ch-state';
       D.ch2Label.querySelector('.viewport__ch-dot').classList.remove('active-ch2');
+      if (D.topoR2) { D.topoR2.textContent = 'STANDBY'; D.topoR2.style.color = '#ffaa00'; }
     }
 
     // 4. Request pending card
@@ -1463,6 +1630,49 @@
     }, 6000);
   }
 
+  /* ═══════════════════════════════════
+     DYNAMIC ALERT CENTER
+     ═══════════════════════════════════ */
+  function addAlert(title, subtitle, type, badge) {
+    const body = D.alertCenterBody;
+    if (!body) return;
+    // Remove empty message
+    const emptyMsg = D.alertEmptyMsg;
+    if (emptyMsg) emptyMsg.remove();
+    
+    const colors = { red: '#FF4D4D', amber: '#FFB020', green: '#00ff88', blue: '#2F7BFF', cyan: '#00E5FF' };
+    const color = colors[type] || colors.cyan;
+    const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+    
+    const entry = document.createElement('div');
+    entry.className = 'alert-entry';
+    entry.style.cssText = `display:flex;align-items:center;gap:12px;padding:8px 12px;background:rgba(${type === 'red' ? '255,77,77' : type === 'amber' ? '255,176,32' : type === 'green' ? '0,255,136' : '47,123,255'},0.05);border:1px solid rgba(${type === 'red' ? '255,77,77' : type === 'amber' ? '255,176,32' : type === 'green' ? '0,255,136' : '47,123,255'},0.15);border-radius:6px;`;
+    entry.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="${color}" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div style="flex:1;"><div class="font-space" style="font-size:0.75rem;font-weight:700;color:#fff;">${title}</div><div class="font-jetbrains text-dim" style="font-size:0.6rem;">${subtitle}</div></div><div class="font-jetbrains text-dim" style="font-size:0.65rem;">${time}</div><div style="background:rgba(${type === 'red' ? '255,77,77' : type === 'amber' ? '255,176,32' : type === 'green' ? '0,255,136' : '47,123,255'},0.15);color:${color};padding:2px 6px;border-radius:4px;font-size:0.6rem;font-weight:700;" class="font-space">${badge}</div>`;
+    
+    body.insertBefore(entry, body.firstChild);
+    // Keep max 10 alerts
+    while (body.children.length > 10) body.removeChild(body.lastChild);
+  }
+
+  /* ═══════════════════════════════════
+     UPTIME TRACKER
+     ═══════════════════════════════════ */
+  let uptimeStart = null;
+  function startUptimeTracker() {
+    uptimeStart = Date.now();
+    setInterval(() => {
+      if (!S.connected || !uptimeStart) {
+        if (D.gridUptime) { D.gridUptime.textContent = '0d 0h 0m'; D.gridUptime.style.color = '#586069'; }
+        return;
+      }
+      const elapsed = Date.now() - uptimeStart;
+      const days = Math.floor(elapsed / 86400000);
+      const hours = Math.floor((elapsed % 86400000) / 3600000);
+      const mins = Math.floor((elapsed % 3600000) / 60000);
+      if (D.gridUptime) { D.gridUptime.textContent = `${days}d ${hours}h ${mins}m`; D.gridUptime.style.color = '#00ff88'; }
+    }, 10000);
+  }
+
   /* ─── Boot Terminal ─── */
   function boot() {
     const style = document.createElement('style');
@@ -1475,10 +1685,22 @@
     bindSettings();
     initSocket();
     startSimulatedActivities();
+    startUptimeTracker();
+    
+    // Dynamic date
+    const dateEl = $('cmd-date');
+    if (dateEl) {
+      const now = new Date();
+      const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      dateEl.textContent = `${String(now.getDate()).padStart(2,'0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    }
+    
+    // Initial syncHUD to set everything to offline state
+    syncHUD();
     
     addLog('National Wireless Grid Dispatch Control Terminal initialized.', 'green');
     addLog('Three.js Vector Render Pipeline: ACTIVE', 'green');
-    addLog('Awaiting connection request validation handshakes...', 'cyan');
+    addLog('Awaiting ESP32 hardware connection...', 'cyan');
   }
 
   window.addEventListener('DOMContentLoaded', boot);
