@@ -16,7 +16,7 @@
 // ═════ Wi-Fi & SERVER CONFIGURATION ═════
 const char* ssid     = "Aditya";
 const char* password = "Aditya09";
-const char* serverIP = "192.168.1.100"; // Target Flask server IP address
+const char* serverIP = "172.168.27.37"; // Target Flask server IP address
 const int serverPort = 5000;
 
 WebSocketsClient webSocket;
