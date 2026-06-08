@@ -197,12 +197,27 @@ void loop() {
     lastTelemetryTime = now;
     
     if (ws_connected && relay_active) {
+      #ifdef __cplusplus
+      extern "C" {
+        uint8_t temprature_sens_read();
+      }
+      #endif
+      
+      float temp = (temprature_sens_read() - 32) / 1.8; // Internal ESP32 temp approx
+      float pf = (voltage > 0 && current > 0) ? (wattage / (voltage * current)) : 0.0;
+      if(pf > 1.0) pf = 1.0;
+      
       String payload = "42[\"esp_telemetry\",{"
                        "\"source\":\"home_esp32_sensor\","
                        "\"voltage\":" + String(voltage, 1) + ","
                        "\"current\":" + String(current, 2) + ","
                        "\"wattage\":" + String(wattage, 0) + ","
-                       "\"frequency\":" + String(frequency, 2) + 
+                       "\"frequency\":" + String(frequency, 2) + ","
+                       "\"power_factor\":" + String(pf, 2) + ","
+                       "\"temperature\":" + String(temp, 1) + ","
+                       "\"rssi\":" + String(WiFi.RSSI()) + ","
+                       "\"uptime\":" + String(millis()) + ","
+                       "\"relay_state\":" + (relay_active ? String("true") : String("false")) +
                        "}]";
       webSocket.sendTXT(payload);
     }

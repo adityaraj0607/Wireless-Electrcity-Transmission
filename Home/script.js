@@ -64,19 +64,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if(text.includes('DASHBOARD')) {
         switchView('view-dashboard');
-      } else if(text.includes('REQUEST ELECTRICITY')) {
+            } else if(text.includes('REQUEST ELECTRICITY')) {
         switchView('view-request');
-        socket.emit('request_electricity');
-        if(txTimeReq) txTimeReq.textContent = new Date().toLocaleTimeString('en-US', {hour12:false});
-        const steps = document.querySelectorAll('.transmission-workflow .step');
-        if(steps.length > 0) {
-          steps.forEach((s, idx) => { s.className = (idx === 0) ? 'step pending' : 'step'; });
-          steps[0].className = 'step active';
-        }
       } else if(text.includes('TRANSMISSION STATUS')) {
         switchView('view-transmission');
+        fetchTxHistory();
       } else if(text.includes('LIVE MONITORING')) {
-        switchView('view-live');
+        switchView('view-dashboard');
+        const metrics = document.querySelector('.metrics-row');
+        if(metrics) metrics.scrollIntoView({behavior: 'smooth', block: 'start'});
       } else if(text.includes('USAGE')) {
         switchView('view-usage');
         fetchUsage();
@@ -320,3 +316,361 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial Fetch for Sidebar
   fetchWallet();
 });
+
+  // --- Request Page Logic ---
+  const powerSlider = document.getElementById('power-slider');
+  const powerDisplay = document.getElementById('power-display');
+  if(powerSlider && powerDisplay) {
+      powerSlider.addEventListener('input', (e) => {
+          powerDisplay.textContent = e.target.value + ' W';
+      });
+  }
+
+  const durationSlider = document.getElementById('duration-slider');
+  const durationDisplay = document.getElementById('duration-display');
+  if(durationSlider && durationDisplay) {
+      durationSlider.addEventListener('input', (e) => {
+          let val = e.target.value;
+          durationDisplay.textContent = (val < 10 ? '0' + val : val) + ':00:00';
+      });
+  }
+
+  const priorityBtns = document.querySelectorAll('.priority-btn');
+  priorityBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+          priorityBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+      });
+  });
+
+  const btnInitiate = document.getElementById('btn-initiate-tx');
+  if(btnInitiate) {
+      btnInitiate.addEventListener('click', () => {
+          // Switch to dashboard to show OTP and timeline
+          switchView('view-dashboard');
+          window.scrollTo({top:0, behavior:'smooth'});
+          
+          socket.emit('request_electricity', {
+              power: powerSlider.value,
+              duration: durationSlider.value
+          });
+          
+          if(txTimeReq) txTimeReq.textContent = new Date().toLocaleTimeString('en-US', {hour12:false});
+          const steps = document.querySelectorAll('.transmission-workflow .step');
+          if(steps.length > 0) {
+              steps.forEach((s, idx) => { s.className = (idx === 0) ? 'step pending' : 'step'; });
+              steps[0].className = 'step active';
+          }
+          
+          // Scroll down to transmission status smoothly after a short delay
+          setTimeout(() => {
+              const card = document.querySelector('.transmission-status');
+              if(card) card.scrollIntoView({behavior: 'smooth', block: 'start'});
+          }, 500);
+      });
+  }
+
+  // --- Dual-View Synchronization ---
+  function updateElement(id1, id2, html) {
+      const el1 = document.getElementById(id1);
+      const el2 = document.getElementById(id2);
+      if(el1) el1.innerHTML = html;
+      if(el2) el2.innerHTML = html;
+  }
+
+  // Override socket listener logic for transmission status updates
+  const originalSocketOn = socket.on.bind(socket);
+  socket.on = function(eventName, callback) {
+      if(eventName === 'request_electricity') {
+          originalSocketOn('request_electricity', (data) => {
+              const time = new Date().toLocaleTimeString('en-US', {hour12:false});
+              updateElement('tx-time-request', 'page-tx-time-request', time);
+              updateWorkflowSteps(0);
+              callback(data);
+          });
+      } else {
+          originalSocketOn(eventName, callback);
+      }
+  }
+
+  function updateWorkflowSteps(stepIndex) {
+      const dbSteps = document.querySelectorAll('.transmission-workflow .step');
+      const pageSteps = document.querySelectorAll('.page-tx-workflow .step');
+      
+      [dbSteps, pageSteps].forEach(steps => {
+          if(steps.length > 0) {
+              steps.forEach((s, idx) => { s.className = (idx < stepIndex) ? 'step complete' : (idx === stepIndex ? 'step active' : 'step'); });
+              if(stepIndex === 4) {
+                 steps[4].classList.add('pulse');
+                 steps[4].querySelector('.icon-wrap').classList.add('glow-purple');
+                 const prevLine = steps[4].previousElementSibling;
+                 if(prevLine && prevLine.classList.contains('line')) prevLine.classList.add('purple');
+              }
+          }
+      });
+  }
+
+  // --- Live Logs & History ---
+  window.addLog = function(msg, type='sys') {
+      const txLiveLogs = document.getElementById('tx-live-logs');
+      if(!txLiveLogs) return;
+      const el = document.createElement('div');
+      el.className = `log-entry log-${type}`;
+      const time = new Date().toLocaleTimeString('en-US', {hour12:false});
+      el.textContent = `[${time}] ${msg}`;
+      txLiveLogs.appendChild(el);
+      txLiveLogs.scrollTop = txLiveLogs.scrollHeight;
+  }
+
+  originalSocketOn('channel_assigned', (data) => {
+      window.addLog(`Channel assigned: ${data.channel} (Freq: ${data.frequency})`, 'info');
+      updateElement('tx-channel', 'page-tx-channel', data.channel);
+      const time = new Date().toLocaleTimeString('en-US', {hour12:false});
+      updateElement('tx-time-channel', 'page-tx-time-channel', time);
+      updateWorkflowSteps(2);
+  });
+  
+  originalSocketOn('otp_verified', () => {
+      window.addLog(`OTP Verification successful.`, 'success');
+      const time = new Date().toLocaleTimeString('en-US', {hour12:false});
+      updateElement('tx-time-otp', 'page-tx-time-otp', time);
+      updateWorkflowSteps(1);
+  });
+
+  originalSocketOn('relay_engaged', () => {
+      window.addLog(`Relay protection bypassed. Connection secured.`, 'success');
+      const time = new Date().toLocaleTimeString('en-US', {hour12:false});
+      updateElement('tx-time-relay', 'page-tx-time-relay', time);
+      updateWorkflowSteps(3);
+  });
+
+  originalSocketOn('transmission_active', (data) => {
+      window.addLog(`Power transmission started. Ramping up power.`, 'warn');
+      const time = new Date().toLocaleTimeString('en-US', {hour12:false});
+      updateElement('tx-time-active', 'page-tx-time-active', time);
+      
+      updateElement('tx-power-req', 'page-tx-power-req', `${data.power} W`);
+      updateElement('tx-duration', 'page-tx-duration', `${data.duration}:00:00`);
+      updateElement('tx-status', 'page-tx-status', `Active <span class="dot green"></span>`);
+      
+      const dbStatus = document.getElementById('tx-status');
+      const pgStatus = document.getElementById('page-tx-status');
+      if(dbStatus) dbStatus.className = 'value text-purple';
+      if(pgStatus) pgStatus.className = 'value text-purple';
+      
+      updateWorkflowSteps(4);
+  });
+
+  originalSocketOn('transmission_complete', () => {
+      window.addLog(`Transmission completed successfully.`, 'success');
+      updateElement('tx-status', 'page-tx-status', `Completed`);
+      const dbStatus = document.getElementById('tx-status');
+      const pgStatus = document.getElementById('page-tx-status');
+      if(dbStatus) dbStatus.className = 'value text-green';
+      if(pgStatus) pgStatus.className = 'value text-green';
+      updateWorkflowSteps(5);
+  });
+
+  originalSocketOn('otp_error', (data) => window.addLog(`OTP Verification failed: ${data.msg}`, 'error'));
+  originalSocketOn('insufficient_funds', (data) => window.addLog(`Insufficient funds. Need ₹${data.required}.`, 'error'));
+
+  window.fetchTxHistory = function() {
+      fetch('http://localhost:5000/api/history')
+        .then(r => r.json())
+        .then(data => {
+            const body = document.getElementById('tx-history-body');
+            if(!body) return;
+            if(data.success && data.history.length > 0) {
+                body.innerHTML = '';
+                data.history.forEach(tx => {
+                    const row = document.createElement('tr');
+                    let statusClass = 'completed';
+                    if(tx.status === 'Active') statusClass = 'active';
+                    else if(tx.status === 'Failed') statusClass = 'failed';
+                    
+                    row.innerHTML = `
+                        <td>${new Date(tx.timestamp).toLocaleString('en-GB')}</td>
+                        <td>${tx.target_node}</td>
+                        <td>${tx.power_requested} W</td>
+                        <td>${tx.duration_requested}</td>
+                        <td><span class="status-badge ${statusClass}">${tx.status}</span></td>
+                    `;
+                    body.appendChild(row);
+                });
+            } else {
+                body.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #666; padding: 20px;">No recent transmissions found.</td></tr>`;
+            }
+        }).catch(err => console.error('Failed to load history', err));
+  }
+
+// ═════ PRODUCTION DATA BINDING ═════
+const DOM = {
+    dashEff: document.getElementById('dash-efficiency'),
+    dashHealth: document.getElementById('dash-health'),
+    dashUptime: document.getElementById('dash-uptime'),
+    dashConn: document.getElementById('dash-conn-quality'),
+    devUptime: document.getElementById('dev-uptime'),
+    devRelayState: document.getElementById('dev-relay-state'),
+    devRelayHealth: document.getElementById('dev-relay-health'),
+    devHeartbeat: document.getElementById('dev-heartbeat'),
+    devRssi: document.getElementById('dev-rssi'),
+    devProtection: document.getElementById('dev-protection'),
+    secAes: document.getElementById('sec-aes'),
+    secTunnel: document.getElementById('sec-tunnel'),
+    secKey: document.getElementById('sec-key'),
+    secAuth: document.getElementById('sec-auth'),
+    timeline: document.getElementById('activity-timeline-container'),
+    walletTable: document.getElementById('wallet-table-body'),
+    walletBal: document.getElementById('wallet-balance-big'),
+    sidebarWallet: document.getElementById('sidebar-wallet')
+};
+
+function formatUptime(ms) {
+    if(!ms) return "--:--:--";
+    let s = Math.floor(ms / 1000);
+    let h = Math.floor(s / 3600);
+    s %= 3600;
+    let m = Math.floor(s / 60);
+    s %= 60;
+    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+// Global State Sync from Backend
+socket.on('state_sync', (state) => {
+    // Top Bar Status
+    const topStatusText = document.querySelector('.header-stats .stat-box:nth-child(2) .value');
+    if(topStatusText) {
+        if(state.home.connected && state.home.esp) {
+            topStatusText.innerHTML = '<span class="dot green"></span> CONNECTED';
+            topStatusText.style.color = '#00FF88';
+        } else {
+            topStatusText.innerHTML = '<span class="dot red"></span> OFFLINE';
+            topStatusText.style.color = '#FF4D4D';
+        }
+    }
+
+    // Security Status
+    if(state.otp && state.otp.encryption) {
+        if(DOM.secAes) DOM.secAes.textContent = 'AES-256 ACTIVE';
+        if(DOM.secTunnel) DOM.secTunnel.textContent = 'SECURED';
+        if(DOM.secKey) DOM.secKey.textContent = 'LOCKED';
+        if(DOM.secAuth) DOM.secAuth.textContent = 'VERIFIED';
+    } else {
+        if(DOM.secAes) DOM.secAes.textContent = 'STANDBY';
+        if(DOM.secTunnel) DOM.secTunnel.textContent = 'STANDBY';
+        if(DOM.secKey) DOM.secKey.textContent = 'PENDING';
+        if(DOM.secAuth) DOM.secAuth.textContent = 'PENDING';
+    }
+    
+    // Relay State
+    if(DOM.devRelayState) {
+        if(state.home.relay) {
+            DOM.devRelayState.textContent = 'CLOSED (ACTIVE)';
+            DOM.devRelayState.className = 'value text-purple';
+            if(DOM.devProtection) {
+                DOM.devProtection.textContent = 'BYPASSED';
+                DOM.devProtection.className = 'value text-amber';
+            }
+        } else {
+            DOM.devRelayState.textContent = 'OPEN (SAFE)';
+            DOM.devRelayState.className = 'value text-green';
+            if(DOM.devProtection) {
+                DOM.devProtection.textContent = 'ARMED';
+                DOM.devProtection.className = 'value text-green';
+            }
+        }
+    }
+});
+
+// High-Fidelity Telemetry Updates
+socket.on('telemetry_update', (t) => {
+    // Existing mapping
+    if(document.getElementById('live-voltage')) document.getElementById('live-voltage').textContent = t.voltage.toFixed(1) + ' V';
+    if(document.getElementById('live-current')) document.getElementById('live-current').textContent = t.current.toFixed(2) + ' A';
+    if(document.getElementById('live-frequency')) document.getElementById('live-frequency').textContent = t.frequency.toFixed(2) + ' Hz';
+    if(document.querySelector('.power-gauge .value')) document.querySelector('.power-gauge .value').innerHTML = t.wattage + '<span>W</span>';
+    
+    // New mappings
+    if(DOM.dashEff) DOM.dashEff.textContent = (t.power_factor * 100).toFixed(1) + '%';
+    if(DOM.dashHealth) DOM.dashHealth.textContent = '100.0%';
+    if(DOM.devRelayHealth) DOM.devRelayHealth.textContent = '100.0%';
+    
+    let uptimeStr = formatUptime(t.uptime);
+    if(DOM.dashUptime) DOM.dashUptime.textContent = uptimeStr;
+    if(DOM.devUptime) DOM.devUptime.textContent = uptimeStr;
+    
+    if(DOM.devRssi) DOM.devRssi.textContent = t.rssi + ' dBm';
+    
+    // Calculate signal bars based on RSSI
+    let barsHtml = '';
+    if(t.rssi > -60) barsHtml = '<div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>';
+    else if(t.rssi > -70) barsHtml = '<div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar half"></div>';
+    else if(t.rssi > -80) barsHtml = '<div class="bar"></div><div class="bar"></div><div class="bar half"></div><div class="bar off"></div>';
+    else barsHtml = '<div class="bar"></div><div class="bar off"></div><div class="bar off"></div><div class="bar off"></div>';
+    
+    if(DOM.dashConn) DOM.dashConn.innerHTML = `EXCELLENT <span class="bars">${barsHtml}</span>`;
+    
+    if(DOM.devHeartbeat) DOM.devHeartbeat.textContent = "Live";
+});
+
+// Periodic API Fetchers for History
+function fetchTimeline() {
+    fetch('http://localhost:5000/api/timeline')
+        .then(r => r.json())
+        .then(data => {
+            if(DOM.timeline && data.length > 0) {
+                DOM.timeline.innerHTML = '';
+                data.forEach(evt => {
+                    let icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+                    if(evt.event_type.includes('OTP')) icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
+                    if(evt.event_type.includes('SYSTEM')) icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>';
+                    
+                    DOM.timeline.innerHTML += `
+                        <div class="timeline-item">
+                            <div class="icon-wrap ${evt.event_type.includes('CRITICAL') ? 'glow-purple' : ''}">
+                                ${icon}
+                            </div>
+                            <div class="content">
+                                <span class="time">${new Date(evt.timestamp).toLocaleTimeString('en-GB')}</span>
+                                <h4>${evt.event_type}</h4>
+                                <p>${evt.description}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        });
+}
+
+function fetchWallet() {
+    fetch('http://localhost:5000/api/wallet')
+        .then(r => r.json())
+        .then(data => {
+            let formattedBal = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(data.balance);
+            if(DOM.walletBal) DOM.walletBal.textContent = formattedBal;
+            if(DOM.sidebarWallet) DOM.sidebarWallet.textContent = data.balance.toFixed(2);
+            
+            if(DOM.walletTable && data.transactions.length > 0) {
+                DOM.walletTable.innerHTML = '';
+                data.transactions.forEach(tx => {
+                    DOM.walletTable.innerHTML += `
+                        <tr>
+                            <td>${new Date(tx.timestamp).toLocaleString('en-GB')}</td>
+                            <td>${tx.description}</td>
+                            <td><span class="status-badge completed">Completed</span></td>
+                            <td><strong>₹ ${tx.amount.toFixed(2)}</strong></td>
+                        </tr>
+                    `;
+                });
+            }
+        });
+}
+
+// Initial Fetch and Request State
+setTimeout(() => {
+    socket.emit('request_state');
+    fetchTimeline();
+    fetchWallet();
+    setInterval(fetchTimeline, 5000);
+    setInterval(fetchWallet, 10000);
+}, 1000);

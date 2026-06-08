@@ -101,6 +101,11 @@ class State:
         self.tx_start = None
         self.pending = False
         self.req_source = None
+        self.last_heartbeat = None
+        self.esp_rssi = -100
+        self.esp_uptime = 0
+        self.temperature = 0.0
+        self.power_factor = 0.0
 
     def gen_otp(self):
         self.otp_code = ''.join([str(secrets.randbelow(10)) for _ in range(6)])
@@ -185,7 +190,14 @@ class State:
                 "voltage": round(self.voltage, 1),
                 "current": round(self.current, 2),
                 "wattage": round(self.wattage, 0),
-                "frequency": round(self.freq, 2)
+                "frequency": round(self.freq, 2),
+                "power_factor": round(self.power_factor, 2),
+                "temperature": round(self.temperature, 1)
+            },
+            "device": {
+                "rssi": self.esp_rssi,
+                "uptime": self.esp_uptime,
+                "last_heartbeat": self.last_heartbeat
             },
             "limits": {
                 "voltage": self.v_limit,
@@ -506,10 +518,23 @@ def on_socket_update_limits(data):
 
 @socketio.on('esp_telemetry')
 def on_telem(d):
-    S.voltage = d.get('voltage', S.voltage)
-    S.current = d.get('current', S.current)
-    S.wattage = d.get('wattage', S.wattage)
-    S.freq = d.get('frequency', S.freq)
+    S.last_heartbeat = time.time()
+    if not S.home_esp:
+        S.home_esp = True
+        S.home_connected = True
+        db_log_event("SYSTEM", "ESP32 Device Online (Heartbeat Restored)")
+        broadcast_state()
+
+    S.voltage = float(d.get('voltage', S.voltage))
+    S.current = float(d.get('current', S.current))
+    S.wattage = float(d.get('wattage', S.wattage))
+    S.freq = float(d.get('frequency', S.freq))
+    S.power_factor = float(d.get('power_factor', S.power_factor))
+    S.temperature = float(d.get('temperature', S.temperature))
+    S.esp_rssi = int(d.get('rssi', S.esp_rssi))
+    S.esp_uptime = int(d.get('uptime', S.esp_uptime))
+    S.home_relay = str(d.get('relay_state', '')).lower() == 'true'
+
     
     t = {
         'voltage': round(S.voltage, 1),
@@ -552,46 +577,31 @@ def on_manual(d):
     socketio.emit('relay_state_update', {'ch1': S.grid_ch1, 'ch2': S.grid_ch2, 'home': S.home_relay}, room='grid')
     broadcast_state()
 
-def sim_loop():
+
+def watchdog_loop():
     while True:
-        time.sleep(0.5)
-        if S.tx_active:
-            # If no real Home ESP client is connected, generate sim data on the server
-            if not S.home_esp:
-                S.voltage = 220 + random.uniform(-5, 5)
-                S.current = 2.5 + random.uniform(-0.3, 0.3)
-                S.wattage = S.voltage * S.current
-                S.freq = 50 + random.uniform(-0.02, 0.02)
-                
-                t = {
-                    'voltage': round(S.voltage, 1),
-                    'current': round(S.current, 2),
-                    'wattage': round(S.wattage, 0),
-                    'frequency': round(S.freq, 2),
-                    'ts': time.time()
-                }
-                db_log_telemetry(S.voltage, S.current, S.wattage, S.freq)
-                
-                socketio.emit('telemetry_update', t, room='home')
-                socketio.emit('telemetry_update', t, room='grid')
-                socketio.emit('esp_telemetry', t, room='home')
-                
-                ok, v = S.check_safe()
-                if not ok:
-                    S.stop_tx("Overload Sim")
-                    socketio.emit('overload_alert', {'violations': v, 'voltage': S.voltage, 'current': S.current, 'wattage': S.wattage}, room='home')
-                    socketio.emit('esp_relay_off', {}, room='grid_esp')
-                    socketio.emit('esp_relay_off', {}, room='home_esp')
-                    socketio.emit('transmission_halted', {'reason': 'Overload Trip'}, room='grid')
+        time.sleep(1)
+        if S.home_esp and S.last_heartbeat:
+            if time.time() - S.last_heartbeat > 5.0:
+                # Device lost
+                S.home_esp = False
+                S.home_connected = False
+                S.last_heartbeat = None
+                db_log_event("SYSTEM", "CRITICAL: ESP32 Device Offline (Heartbeat Lost)")
+                if S.tx_active:
+                    S.stop_tx("Heartbeat Lost")
+                    socketio.emit('transmission_halted', {'reason': 'Hardware Disconnect'}, room='grid')
                     socketio.emit('transmission_stop', {}, room='home')
-                    broadcast_state()
+                broadcast_state()
 
 if __name__ == '__main__':
+    threading.Thread(target=watchdog_loop, daemon=True).start()
+
     print("\n" + "=" * 60)
     print("  WET MASTER SERVER v3.0 | Aditya Raj & Deepak Kumar Gupta")
     print("=" * 60)
     print(f"  Grid: http://localhost:5000/grid")
     print(f"  Home: http://localhost:5000/home")
     print("=" * 60 + "\n")
-    threading.Thread(target=sim_loop, daemon=True).start()
+    # Production Watchdog handles timeouts instead of simulations
     socketio.run(app, host='0.0.0.0', port=5000, debug=False, allow_unsafe_werkzeug=True)
