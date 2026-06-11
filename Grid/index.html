@@ -48,12 +48,12 @@
           <div style="width:1px; height:24px; background:rgba(255,255,255,0.08);"></div>
           <div class="cmd-metric" style="display:flex; flex-direction:column;">
             <span class="cm-lbl" style="font-size:0.6rem; color:#7f8a9e; letter-spacing:1px; font-weight:600;">CONNECTED NODES</span>
-            <strong class="cm-val" style="font-size:0.85rem;"><span class="text-white" id="hdr-conn-nodes">0</span> <span class="cm-trend text-dim" style="font-size:0.6rem; margin-left:4px;" id="hdr-conn-trend">--</span></strong>
+            <strong class="cm-val" style="font-size:0.85rem;"><span class="text-white" id="hdr-conn-nodes">0</span> <span class="cm-trend text-dim" style="font-size:0.6rem; margin-left:4px;" id="hdr-conn-trend"></span></strong>
           </div>
           <div style="width:1px; height:24px; background:rgba(255,255,255,0.08);"></div>
           <div class="cmd-metric" style="display:flex; flex-direction:column;">
             <span class="cm-lbl" style="font-size:0.6rem; color:#7f8a9e; letter-spacing:1px; font-weight:600;">ACTIVE CONSUMERS</span>
-            <strong class="cm-val" style="font-size:0.85rem;"><span class="text-white" id="hdr-active-consumers">0</span> <span class="cm-trend text-dim" style="font-size:0.6rem; margin-left:4px;" id="hdr-consumer-trend">--</span></strong>
+            <strong class="cm-val" style="font-size:0.85rem;"><span class="text-white" id="hdr-active-consumers">0</span> <span class="cm-trend text-dim" style="font-size:0.6rem; margin-left:4px;" id="hdr-consumer-trend"></span></strong>
           </div>
           <div style="width:1px; height:24px; background:rgba(255,255,255,0.08);"></div>
           <div class="cmd-metric" style="display:flex; flex-direction:column;">
@@ -89,20 +89,20 @@
       <div class="dashboard-layout" style="display: flex; height: calc(100vh - 100px); padding: 16px; gap: 16px; overflow: hidden;">
         
         <!-- LEFT SIDEBAR -->
-        <aside class="sidebar font-space" style="width: 220px; display: flex; flex-direction: column; gap: 16px;">
-          <nav class="side-nav card" style="flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 4px;">
-            <a href="#" class="nav-item active" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #00E5FF; background: rgba(0,229,255,0.05); border-left: 2px solid #00E5FF; text-decoration: none; font-size: 0.8rem; font-weight: 600; border-radius: 4px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Dashboard</a>
-            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Grid Monitoring</a>
-            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>Transmission Sessions</a>
-            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>Relay Control</a>
-            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>Telemetry</a>
-            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>Analytics</a>
-            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>Security</a>
-            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>Reports</a>
-            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Settings</a>
+        <aside class="sidebar font-space" style="width: 220px; min-width: 220px; display: flex; flex-direction: column; gap: 16px; overflow: visible;">
+          <nav class="side-nav card" style="flex: 1; padding: 20px 24px; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 4px;">
+            <a href="#" class="nav-item active" style="display: flex; align-items: center; gap: 12px; padding: 0 12px; height: 44px; white-space: nowrap; color: #00E5FF; background: rgba(0,229,255,0.05); border-left: 2px solid #00E5FF; text-decoration: none; font-size: 0.8rem; font-weight: 600; border-radius: 4px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Dashboard</a>
+            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 0 12px; height: 44px; white-space: nowrap; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Grid Monitoring</a>
+            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 0 12px; height: 44px; white-space: nowrap; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>Transmission Sessions</a>
+            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 0 12px; height: 44px; white-space: nowrap; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>Relay Control</a>
+            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 0 12px; height: 44px; white-space: nowrap; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>Telemetry</a>
+            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 0 12px; height: 44px; white-space: nowrap; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>Analytics</a>
+            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 0 12px; height: 44px; white-space: nowrap; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>Security</a>
+            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 0 12px; height: 44px; white-space: nowrap; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>Reports</a>
+            <a href="#" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 0 12px; height: 44px; white-space: nowrap; color: #8b949e; text-decoration: none; font-size: 0.8rem; font-weight: 500;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Settings</a>
           </nav>
 
-          <div class="grid-health-card card" style="padding: 16px; text-align: center;">
+          <div class="grid-health-card card" style="padding: 20px 24px 60px 24px; text-align: center; margin-bottom: 1.5rem; position: relative;">
             <span class="gh-title font-space" style="font-size: 0.7rem; color: #7f8a9e; font-weight: 700; letter-spacing: 1px;">GRID HEALTH SCORE</span>
             <div class="gh-ring-container" style="position: relative; width: 120px; height: 120px; margin: 16px auto;">
               <svg viewBox="0 0 100 100" class="gh-ring-svg" style="width: 100%; height: 100%; transform: rotate(-90deg);">
@@ -121,15 +121,15 @@
         </aside>
 
         <!-- MAIN CONTENT AREA -->
-        <div class="main-content">
+        <div class="main-content" style="display: flex; flex-direction: column; gap: 1.5rem; flex: 1;">
           
           <!-- TOP ROW: OVERVIEW & TELEMETRY -->
-          <div class="top-row-grid">
+          <div class="top-row-grid" style="display: flex; gap: 1.5rem;">
             
-            <div class="left-col">
+            <div class="left-col" style="display: flex; flex-direction: column; gap: 1.5rem; flex: 2; min-width: 0;">
               <!-- GRID OVERVIEW -->
-              <section class="card overview-card" style="flex-shrink: 0; padding: 12px 16px;">
-                <div class="card__header" style="margin-bottom:8px;">
+              <section class="card overview-card" style="flex-shrink: 0; padding: 20px 24px; position: relative; margin-bottom: 1.5rem;">
+                <div class="card__header" style="margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
                   <span class="card__title font-space" style="color:#fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">GRID OVERVIEW</span>
                 </div>
                 <div class="overview-stats font-space" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
@@ -178,8 +178,8 @@
               </section>
 
               <!-- GRID NETWORK TOPOLOGY (PERCENTAGE RESPONSIVE SVG) -->
-              <section class="card topology-card" style="flex: 1; min-height: 200px; display: flex; flex-direction: column; overflow: hidden; position: relative; padding: 12px 16px;">
-                <div class="card__header" style="display:flex; justify-content:space-between; flex-shrink: 0; margin-bottom: 8px;">
+              <section class="card topology-card" style="flex: 1; min-height: 200px; display: flex; flex-direction: column; overflow-x: auto; overflow-y: hidden; position: relative; padding: 20px 24px; margin-bottom: 1.5rem;">
+                <div class="card__header" style="display:flex; justify-content:space-between; align-items:center; flex-shrink: 0; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08);">
                   <span class="card__title font-space" style="color:#fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">GRID NETWORK TOPOLOGY</span>
                   <div class="topo-legend font-space" style="display:flex; gap:16px; font-size:0.6rem; font-weight: 600;">
                     <div style="display:flex; align-items:center; gap:6px;"><div style="width:16px; height:2px; background:#00E5FF; box-shadow:0 0 4px #00E5FF; border-radius:2px;"></div>POWER FLOW</div>
@@ -189,7 +189,7 @@
                   </div>
                 </div>
                 
-                <div class="topology-svg-container" style="flex: 1; min-height: 0; position: relative; width: 100%; background: radial-gradient(circle at center, rgba(0,229,255,0.04) 0%, transparent 70%);">
+                <div class="topology-svg-container" style="flex: 1; min-height: 0; position: relative; width: 100%; min-width: 600px; background: radial-gradient(circle at center, rgba(0,229,255,0.04) 0%, transparent 70%);">
                   <!-- CSS-based interactive SVG network -->
                   <svg viewBox="0 0 1000 500" preserveAspectRatio="none" style="position:absolute; width:100%; height:100%; top:0; left:0;">
                     <!-- Line from Power Plant (15%) to Node A (32%) -->
@@ -247,7 +247,7 @@
                     <div class="topo-node-info" style="margin-top: 6px;">
                       <div class="topo-node-title">GRID NODE A</div>
                       <div class="topo-node-sub" style="color: #00ff88; font-weight:700;">500 kV</div>
-                      <div class="topo-node-status" style="color: #ffaa00; font-weight:700;" id="topo-status-grid">OFFLINE</div>
+                      <div class="topo-node-status" style="background: rgba(255,59,48,0.15); color: #ff453a; border: 1px solid rgba(255,59,48,0.25); border-radius: 4px; padding: 2px 8px; font-size: 10px; display: inline-block; margin-top: 4px; font-weight: 700;" id="topo-status-grid">OFFLINE</div>
                     </div>
                   </div>
 
@@ -259,7 +259,7 @@
                     <div class="topo-node-info">
                       <div class="topo-node-title">RELAY GATE 1</div>
                       <div class="topo-node-sub">CHANNEL 1</div>
-                      <div class="topo-node-status" style="color: #ffaa00;" id="topo-status-r1">STANDBY</div>
+                      <div class="topo-node-status" style="background: rgba(255,159,10,0.15); color: #ff9f0a; border: 1px solid rgba(255,159,10,0.25); border-radius: 4px; padding: 2px 8px; font-size: 10px; display: inline-block; margin-top: 4px; font-weight: 700;" id="topo-status-r1">STANDBY</div>
                     </div>
                   </div>
 
@@ -271,7 +271,7 @@
                     <div class="topo-node-info">
                       <div class="topo-node-title">RELAY GATE 2</div>
                       <div class="topo-node-sub">CHANNEL 2</div>
-                      <div class="topo-node-status" style="color: #ffaa00;" id="topo-status-r2">STANDBY</div>
+                      <div class="topo-node-status" style="background: rgba(255,159,10,0.15); color: #ff9f0a; border: 1px solid rgba(255,159,10,0.25); border-radius: 4px; padding: 2px 8px; font-size: 10px; display: inline-block; margin-top: 4px; font-weight: 700;" id="topo-status-r2">STANDBY</div>
                     </div>
                   </div>
 
@@ -283,7 +283,7 @@
                     <div class="topo-node-info">
                       <div class="topo-node-title">HOME NODE 101</div>
                       <div class="topo-node-sub">CONSUMER</div>
-                      <div class="topo-node-status" style="color: #ffaa00;" id="topo-status-h101">OFFLINE</div>
+                      <div class="topo-node-status" style="background: rgba(255,59,48,0.15); color: #ff453a; border: 1px solid rgba(255,59,48,0.25); border-radius: 4px; padding: 2px 8px; font-size: 10px; display: inline-block; margin-top: 4px; font-weight: 700;" id="topo-status-h101">OFFLINE</div>
                     </div>
                   </div>
 
@@ -295,7 +295,7 @@
                     <div class="topo-node-info">
                       <div class="topo-node-title">HOME NODE 117</div>
                       <div class="topo-node-sub">CONSUMER</div>
-                      <div class="topo-node-status" style="color: #ffaa00;" id="topo-status-h117">OFFLINE</div>
+                      <div class="topo-node-status" style="background: rgba(255,59,48,0.15); color: #ff453a; border: 1px solid rgba(255,59,48,0.25); border-radius: 4px; padding: 2px 8px; font-size: 10px; display: inline-block; margin-top: 4px; font-weight: 700;" id="topo-status-h117">OFFLINE</div>
                     </div>
                   </div>
 
@@ -307,39 +307,41 @@
                     <div class="topo-node-info">
                       <div class="topo-node-title">HOME NODE 203</div>
                       <div class="topo-node-sub">CONSUMER</div>
-                      <div class="topo-node-status" style="color: #ffaa00;" id="topo-status-h203">OFFLINE</div>
+                      <div class="topo-node-status" style="background: rgba(255,59,48,0.15); color: #ff453a; border: 1px solid rgba(255,59,48,0.25); border-radius: 4px; padding: 2px 8px; font-size: 10px; display: inline-block; margin-top: 4px; font-weight: 700;" id="topo-status-h203">OFFLINE</div>
                     </div>
                   </div>
                 </div>
               </section>
 
               <!-- QUICK ACTIONS -->
-              <section class="card quick-actions-card" style="flex-shrink: 0; padding: 12px 16px;">
-                <div class="card__header" style="margin-bottom:8px;">
+              <section class="card quick-actions-card" style="flex-shrink: 0; padding: 20px 24px; position: relative; margin-bottom: 1.5rem;">
+                <div class="card__header" style="margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
                   <span class="card__title font-space" style="color:#fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">QUICK ACTIONS</span>
+                  <div style="font-size:0.6rem; letter-spacing:1px; display: flex; align-items: center; gap: 8px;" class="font-space">
+                    DIRECT HARDWARE: <span id="relay-status" style="background: rgba(255,59,48,0.15); color: #ff3b30; border: 1px solid rgba(255,59,48,0.3); border-radius: 6px; padding: 3px 10px; font-size: 11px; letter-spacing: 0.05em; font-weight: 600;">LOCKED</span>
+                  </div>
                 </div>
                 <div class="action-buttons-row" style="display:flex; flex-wrap:wrap; gap:12px;">
                   <button class="action-btn" id="soc-btn-auth"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Authorize Request</button>
-                  <button class="action-btn"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Assign Channel</button>
+                  <button class="action-btn action-btn--warning" id="overrideBtn" style="border-color:#ffaa00; color:#ffaa00;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>MANUAL OVERRIDE (OPEN GATE)</button>
                   <button class="action-btn action-btn--purple" id="session-term-btn"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Terminate Session</button>
                   <button class="action-btn action-btn--danger" id="soc-btn-halt"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Emergency Shutdown</button>
-                  <button class="action-btn action-btn--warning" id="soc-btn-diag"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Diagnostics</button>
-                  <div style="display:none;"><button id="soc-btn-deny"></button></div>
+                  <div style="display:none;"><button id="soc-btn-deny"></button><button id="soc-btn-diag"></button></div>
                 </div>
               </section>
 
             </div>
 
             <!-- RIGHT COL: LIVE TELEMETRY -->
-            <div class="right-col">
-              <section class="card telemetry-card" style="flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 12px 16px;">
-                <div class="card__header" style="display:flex; justify-content:space-between; flex-shrink: 0; margin-bottom: 8px;">
+            <div class="right-col" style="display: flex; flex-direction: column; flex: 1; gap: 1.5rem; min-width: 0;">
+              <section class="card telemetry-card" style="flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 20px 24px; position: relative; margin-bottom: 1.5rem;">
+                <div class="card__header" style="display:flex; justify-content:space-between; align-items:center; flex-shrink: 0; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08);">
                   <span class="card__title font-space" style="color:#fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">LIVE TELEMETRY</span>
                   <span style="font-size:0.6rem; color:#00E5FF; font-weight:700; cursor:pointer;" class="font-space">View All</span>
                 </div>
                 
                 <div class="telemetry-rows font-jetbrains" style="flex: 1; min-height: 0; overflow-y: auto;">
-                  <div class="tel-row">
+                  <div class="tel-row" style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div class="tel-name-container">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00ff88" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                       <span class="tel-name">Voltage</span>
@@ -350,7 +352,7 @@
                     <strong class="tel-value" id="pwr-voltage">0.0 V</strong>
                   </div>
                   
-                  <div class="tel-row">
+                  <div class="tel-row" style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div class="tel-name-container">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00E5FF" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                       <span class="tel-name">Current</span>
@@ -361,7 +363,7 @@
                     <strong class="tel-value" id="pwr-current">0.00 A</strong>
                   </div>
 
-                  <div class="tel-row">
+                  <div class="tel-row" style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div class="tel-name-container">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#a855f7" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                       <span class="tel-name">Power</span>
@@ -372,7 +374,7 @@
                     <strong class="tel-value" id="pwr-wattage">0.0 W</strong>
                   </div>
 
-                  <div class="tel-row">
+                  <div class="tel-row" style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div class="tel-name-container">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00E5FF" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                       <span class="tel-name">Frequency</span>
@@ -383,7 +385,7 @@
                     <strong class="tel-value" id="pwr-frequency">0.00 Hz</strong>
                   </div>
 
-                  <div class="tel-row">
+                  <div class="tel-row" style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div class="tel-name-container">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#FFB020" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
                       <span class="tel-name">Power Factor</span>
@@ -394,7 +396,7 @@
                     <strong class="tel-value">0.98</strong>
                   </div>
 
-                  <div class="tel-row">
+                  <div class="tel-row" style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div class="tel-name-container">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#FF4D4D" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
                       <span class="tel-name">Temperature</span>
@@ -405,7 +407,7 @@
                     <strong class="tel-value">31.2 °C</strong>
                   </div>
 
-                  <div class="tel-row">
+                  <div class="tel-row" style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div class="tel-name-container">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00E5FF" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
                       <span class="tel-name">Efficiency</span>
@@ -416,7 +418,7 @@
                     <strong class="tel-value">98.4%</strong>
                   </div>
 
-                  <div class="tel-row">
+                  <div class="tel-row" style="padding: 8px 0; border-bottom: none; gap: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div class="tel-name-container">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#2F7BFF" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                       <span class="tel-name">Latency</span>
@@ -433,11 +435,11 @@
           </div>
 
           <!-- BOTTOM ROW -->
-          <div class="bottom-row-grid">
+          <div class="bottom-row-grid" style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
             
             <!-- TRANSMISSION SESSIONS -->
-            <section class="card bottom-panel" style="display: flex; flex-direction: column; min-height: 0; padding: 12px 16px;">
-              <div class="card__header" style="display:flex; justify-content:space-between; flex-shrink: 0; margin-bottom: 8px;">
+            <section class="card bottom-panel" style="display: flex; flex-direction: column; min-height: 0; padding: 20px 24px; position: relative; margin-bottom: 1.5rem; flex: 1;">
+              <div class="card__header" style="display:flex; justify-content:space-between; align-items:center; flex-shrink: 0; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08);">
                 <span class="card__title font-space" style="color:#fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">TRANSMISSION SESSIONS</span>
                 <span style="font-size:0.6rem; color:#00E5FF; font-weight:700; cursor:pointer;" class="font-space">View All</span>
               </div>
@@ -463,8 +465,8 @@
             </section>
 
             <!-- ALERT CENTER -->
-            <section class="card bottom-panel" style="display: flex; flex-direction: column; min-height: 0; padding: 12px 16px;">
-              <div class="card__header" style="display:flex; justify-content:space-between; flex-shrink: 0; margin-bottom: 8px;">
+            <section class="card bottom-panel" style="display: flex; flex-direction: column; min-height: 0; padding: 20px 24px; position: relative; margin-bottom: 1.5rem; flex: 1;">
+              <div class="card__header" style="display:flex; justify-content:space-between; align-items:center; flex-shrink: 0; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08);">
                 <span class="card__title font-space" style="color:#fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">ALERT CENTER</span>
                 <span style="font-size:0.6rem; color:#00E5FF; font-weight:700; cursor:pointer;" class="font-space">View All</span>
               </div>
@@ -476,8 +478,8 @@
             </section>
 
             <!-- SECURITY & ENCRYPTION -->
-            <section class="card bottom-panel" style="display: flex; flex-direction: column; min-height: 0; padding: 12px 16px;">
-              <div class="card__header" style="display:flex; justify-content:space-between; flex-shrink: 0; margin-bottom: 8px;">
+            <section class="card bottom-panel" style="display: flex; flex-direction: column; min-height: 0; padding: 20px 24px; position: relative; margin-bottom: 1.5rem; flex: 1;">
+              <div class="card__header" style="display:flex; justify-content:space-between; align-items:center; flex-shrink: 0; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08);">
                 <span class="card__title font-space" style="color:#fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">SECURITY & ENCRYPTION</span>
               </div>
               <div class="encryption-status-body" style="flex: 1; min-height: 0; overflow-y: auto; display: flex; align-items: center; gap: 20px;">
@@ -519,13 +521,13 @@
 
       <!-- ==================== SYSTEM STATUS STRIP (FOOTER) ==================== -->
       <footer class="footerbar" style="padding: 4px 24px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; background: rgba(8, 11, 18, 0.8); height: 40px; flex-shrink: 0;">
-        <div class="footerbar__left font-space" style="font-size: 0.6rem; color: #7f8a9e; display: flex; gap: 16px;">
-          <span>GRID ID: <strong style="color: #a855f7;">NG-IND-01</strong></span>
-          <span>SOFTWARE: <strong style="color: #2F7BFF;">v3.2.1</strong></span>
-          <span>ENCRYPTION: <strong style="color: #00ff88;">AES-256</strong></span>
-          <span>UPTIME: <strong style="color: #586069;" id="grid-uptime">0d 0h 0m</strong></span>
+        <div class="footerbar__left font-space" style="font-size: 0.6rem; color: rgba(255,255,255,0.65); display: flex; gap: 16px;">
+          <span>GRID ID: <strong style="color: #4fc3f7;">NG-IND-01</strong></span>
+          <span>SOFTWARE: <strong style="color: #4fc3f7;">v3.2.1</strong></span>
+          <span>ENCRYPTION: <strong style="color: #4fc3f7;">AES-256</strong></span>
+          <span>UPTIME: <strong style="color: #4fc3f7;" id="grid-uptime">0d 0h 0m</strong></span>
         </div>
-        <div class="footerbar__right font-space" style="font-size: 0.6rem; color: #586069;">
+        <div class="footerbar__right font-space" style="font-size: 0.6rem; color: rgba(255,255,255,0.65);">
           &copy; 2026 National Grid Control Center. All Rights Reserved.
         </div>
       </footer>
@@ -557,6 +559,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-  <script src="script.js"></script>
+  <script src="script_v3.js"></script>
 </body>
 </html>

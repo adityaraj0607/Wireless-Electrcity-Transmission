@@ -241,18 +241,26 @@
   let socket = null;
 
   function initSocket() {
-    const target = D.setIP.value || window.location.host || 'localhost:5000';
-    const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
-    
     if (socket) socket.disconnect();
 
-    addLog(`Establishing Socket.IO bridge connection to ${target}...`, 'cyan');
-    
-    socket = io(`${protocol}//${target}`, {
-      transports: ['websocket', 'polling'],
-      reconnectionAttempts: 10,
-      timeout: 10000
-    });
+    if (D.setIP.value) {
+      const target = D.setIP.value;
+      const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+      addLog(`Establishing Socket.IO bridge connection to ${target}...`, 'cyan');
+      socket = io(`${protocol}//${target}`, {
+        transports: ['websocket', 'polling'],
+        reconnectionAttempts: 10,
+        timeout: 10000
+      });
+    } else {
+      const serverUrl = window.location.origin;
+      addLog(`Establishing default Socket.IO bridge connection to ${serverUrl}...`, 'cyan');
+      socket = io(serverUrl, {
+        transports: ['websocket', 'polling'],
+        reconnectionAttempts: 10,
+        timeout: 10000
+      });
+    }
 
     socket.on('connect', () => {
       S.wsConnected = true;
@@ -335,6 +343,21 @@
       S.otp = data.otp;
       addLog(`Secure access request intercepted: Source [${data.source}]`, 'amber');
       Sound.alarm();
+      
+      // Update Alert Center manually
+      addAlert(`POWER REQUEST: ${data.source}`, `Incoming request. OTP: ${data.otp}`, 'amber', 'URGENT');
+      
+      // Add pending state to the table
+      if (D.sessionTableBody) {
+          if(D.sessionTableBody.innerHTML.includes('No active sessions')) {
+              D.sessionTableBody.innerHTML = '';
+          }
+          const tr = document.createElement('tr');
+          tr.id = `req-row-${data.otp}`;
+          tr.innerHTML = `<td style="padding:6px 0;color:#fff;">${data.source}</td><td style="padding:6px 0;color:#888;">--</td><td style="padding:6px 0;color:#ccc;">Pending W</td><td style="padding:6px 0;color:#888;">--</td><td style="padding:6px 0;"><span style="color:#ffaa00;">Awaiting Auth</span></td><td style="padding:6px 0;"><span style="color:#00E5FF; cursor:pointer;">Review</span></td>`;
+          D.sessionTableBody.appendChild(tr);
+      }
+      
       showModal();
       syncHUD();
     });
@@ -1306,6 +1329,13 @@
   async function authorize() {
     try {
       const target = D.setIP.value || window.location.host || 'localhost:5000';
+      
+      await fetch(`http://${target}/api/grid-approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ approve: true })
+      });
+      
       const response = await fetch(`http://${target}/api/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1673,6 +1703,57 @@
     }, 10000);
   }
 
+  /* ═══════════════════════════════════
+     DIRECT ESP32 HARDWARE WEBSOCKET
+     ═══════════════════════════════════ */
+  function initHardwareSocket() {
+    const ESP32_IP = "192.168.81.98"; 
+    const ws = new WebSocket(`ws://${ESP32_IP}:82/`);
+    
+    ws.onopen = () => {
+      addLog('Direct WebSocket tunnel to Grid Hardware (Port 82) Established', 'cyan');
+    };
+    
+    ws.onmessage = (event) => {
+      if(event.data === "GRID_ACTIVE") {
+        const relayStatus = document.getElementById('relay-status');
+        if (relayStatus) {
+            relayStatus.innerText = "TRANSMITTING";
+            relayStatus.style.color = "#00d9ff";
+            relayStatus.classList.add('pulse-dot');
+        }
+        addLog('Hardware Confirmation: Grid Relay is physically OPEN.', 'green');
+        
+        // SYNC BACK TO SERVER SO HOME UI UPDATES!
+        if (socket) {
+          socket.emit('grid_manual_relay', { channel: 1, state: true });
+        }
+      }
+    };
+    
+    ws.onerror = (err) => {
+      console.warn("Direct ESP32 WebSocket error (ensure hardware is running port 82)", err);
+    };
+
+    const overrideBtn = document.getElementById('overrideBtn');
+    if (overrideBtn) {
+      overrideBtn.addEventListener('click', () => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send("FORCE_OPEN");
+          const relayStatus = document.getElementById('relay-status');
+          if(relayStatus) {
+            relayStatus.innerText = "AUTHORIZING...";
+            relayStatus.style.color = "#ffaa00";
+            relayStatus.classList.remove('pulse-dot');
+          }
+          addLog('Command sent to Grid ESP32... waiting for physical relay click.', 'amber');
+        } else {
+          addLog('Error: Direct Hardware WebSocket is not open.', 'red');
+        }
+      });
+    }
+  }
+
   /* ─── Boot Terminal ─── */
   function boot() {
     const style = document.createElement('style');
@@ -1684,6 +1765,7 @@
     bindEvents();
     bindSettings();
     initSocket();
+    initHardwareSocket(); // <-- Direct ESP32 Hardware Connection
     startSimulatedActivities();
     startUptimeTracker();
     

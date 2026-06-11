@@ -1,531 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WETA HOME RECEIVER TERMINAL</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
-</head>
-<body>
-  <div id="app">
-    <!-- LEFT SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-brand">
-        <div class="brand-icon">⚡</div>
-        <div class="brand-text">
-          <h1>WETA</h1>
-          <h2>HOME RECEIVER TERMINAL</h2>
-          <p>Wireless Electricity Transmission</p>
-        </div>
-      </div>
+import re
+import sys
 
-      <nav class="sidebar-nav">
-        <a href="#" class="nav-item active">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-          Dashboard
-        </a>
-        <a href="#" class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8l4 4-4 4M8 12h8"></path></svg>
-          Request Electricity
-        </a>
-        <a href="#" class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12H3M21 12l-6-6M21 12l-6 6"></path></svg>
-          Transmission Status
-        </a>
-        <a href="#" class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-          Live Monitoring
-        </a>
-        <a href="#" class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-          Energy Usage
-        </a>
-        <a href="#" class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          Safety & Security
-        </a>
-        <a href="#" class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          Activity Timeline
-        </a>
-        <a href="#" class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
-          Device & Relay
-        </a>
-        <a href="#" class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-          Energy Wallet
-        </a>
-        <a href="#" class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          Settings
-        </a>
-      </nav>
+file_path = r"e:\Wireless Electricity Transmission\Home\index.html"
 
-      <div class="sidebar-bottom">
-        <div class="wallet-card">
-          <div class="wallet-header">
-            <span>WALLET BALANCE</span>
-          </div>
-          <div class="wallet-amount">
-            <span id="sidebar-wallet-bal">--.--</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
-          </div>
-          <div class="wallet-unit">Credits</div>
-        </div>
+with open(file_path, "r", encoding="utf-8") as f:
+    content = f.read()
 
-        <a href="#" class="support-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
-          <div class="support-text">
-            <span>NEED HELP?</span>
-            <strong>Contact Support</strong>
-          </div>
-        </a>
-      </div>
-    </aside>
+def replace_view(content, start_marker, end_marker, new_html):
+    pattern = re.compile(rf"({re.escape(start_marker)}.*?)(?={re.escape(end_marker)})", re.DOTALL)
+    if pattern.search(content):
+        return pattern.sub(f"{start_marker}\n{new_html}\n\n      ", content)
+    else:
+        # If end marker not found or start marker not found, let's just append or print error
+        print(f"Could not find {start_marker} and {end_marker}")
+        return content
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-      <!-- TOPBAR -->
-      <header class="topbar">
-        <div class="topbar-status">
-          <div class="status-item">
-            <span class="label">HOME NODE</span>
-            <strong class="value text-white">HOME-117</strong>
-          </div>
-          <div class="status-item">
-            <span class="label">NODE ID</span>
-            <strong class="value text-white">N16R8-ESP32</strong>
-          </div>
-          <div class="status-item">
-            <span class="label">SOFTWARE PLATFORM</span>
-            <strong class="value text-green" id="top-software-status"><span class="dot green"></span> ONLINE</strong>
-          </div>
-          <div class="status-item">
-            <span class="label">HARDWARE (ESP32)</span>
-            <strong class="value text-red" id="top-hardware-status"><span class="dot red"></span> OFFLINE</strong>
-          </div>
-          <div class="status-item">
-            <span class="label">GRID CONTROL</span>
-            <strong class="value text-red" id="top-grid-status">OFFLINE <span class="bars"><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span></span></strong>
-          </div>
-        </div>
+def insert_view_after(content, after_marker, new_html):
+    pattern = re.compile(rf"({re.escape(after_marker)}.*?\n      </div>\n)", re.DOTALL)
+    match = pattern.search(content)
+    if match:
+        return content[:match.end()] + f"\n      {new_html}\n" + content[match.end():]
+    else:
+        print(f"Could not find {after_marker}")
+        return content
 
-        <div class="topbar-user">
-          <div class="clock">
-            <strong class="time" id="clock-time">17:54:32</strong>
-            <span class="date" id="clock-date">07 JUNE 2026</span>
-          </div>
-          <div class="notifications">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            <span class="badge">3</span>
-          </div>
-          <div class="profile">
-            <div class="avatar">AR</div>
-            <div class="profile-info">
-              <strong class="name">Aditya Raj</strong>
-              <span class="role">Premium Consumer</span>
-            </div>
-            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </div>
-        </div>
-      </header>
-
-      
-      
-      <!-- DASHBOARD AREA -->
-      <div id="view-dashboard" class="dashboard-scroll view active">
-        <div class="grid-container">
-          
-          <!-- ROW 1 -->
-          <div class="row row-1">
-            <!-- POWER RECEIVING -->
-            <div class="card power-receiving">
-              <div class="card-header">
-                <h2>POWER RECEIVING</h2>
-                <div class="live-badge"><span class="dot"></span> LIVE</div>
-              </div>
-              <div class="power-content">
-                <div class="power-gauge">
-                  <svg viewBox="0 0 140 140">
-                    <defs>
-                      <linearGradient id="power-grad" x1="0%" y1="100%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#00D9FF" />
-                        <stop offset="100%" stop-color="#A855F7" />
-                      </linearGradient>
-                    </defs>
-                    <circle class="bg" cx="70" cy="70" r="62"></circle>
-                    <circle class="progress" cx="70" cy="70" r="62" stroke="url(#power-grad)"></circle>
-                  </svg>
-                  <div class="gauge-center">
-                    <svg class="bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                    <div class="value">567<span>W</span></div>
-                    <div class="label">Live Power</div>
-                  </div>
-                </div>
-                
-                <div class="power-stats">
-                  <div class="stat-item">
-                    <div class="icon">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    </div>
-                    <div class="stat-info">
-                      <span class="stat-label">Today's Usage</span>
-                      <strong class="stat-value">2.48 <span>kWh</span></strong>
-                    </div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="icon cyan">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    </div>
-                    <div class="stat-info">
-                      <span class="stat-label">Today's Cost</span>
-                      <strong class="stat-value">₹ 12.48</strong>
-                    </div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="icon text-cyan">
-                      <strong style="font-family: var(--font-mono); font-size: 14px;">%</strong>
-                    </div>
-                    <div class="stat-info">
-                      <span class="stat-label">Efficiency</span>
-                      <strong class="stat-value" id="dash-efficiency">--%</strong>
-                    </div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="icon text-cyan">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-                    </div>
-                    <div class="stat-info">
-                      <span class="stat-label">Grid Health</span>
-                      <strong class="stat-value" id="dash-health">--%</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- TRANSMISSION STATUS -->
-            <div class="card transmission-status">
-              <div class="card-header">
-                <h2>TRANSMISSION STATUS</h2>
-              </div>
-              <div class="transmission-workflow">
-                <div class="step complete">
-                  <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div>
-                  <strong class="name">Request</strong>
-                  <span class="status text-green">Submitted</span>
-                  <span class="time" id="tx-time-request">--:--:--</span>
-                </div>
-                <div class="line active"></div>
-                <div class="step complete">
-                  <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
-                  <strong class="name">OTP</strong>
-                  <span class="status text-green">Verified</span>
-                  <span class="time" id="tx-time-otp">--:--:--</span>
-                </div>
-                <div class="line active"></div>
-                <div class="step complete">
-                  <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg></div>
-                  <strong class="name">Channel</strong>
-                  <span class="status text-green">Assigned</span>
-                  <span class="time" id="tx-time-channel">--:--:--</span>
-                </div>
-                <div class="line active"></div>
-                <div class="step complete">
-                  <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></div>
-                  <strong class="name">Relay</strong>
-                  <span class="status text-green">Verified</span>
-                  <span class="time" id="tx-time-relay">--:--:--</span>
-                </div>
-                <div class="line active purple"></div>
-                <div class="step active pulse">
-                  <div class="icon-wrap glow-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
-                  <strong class="name">Transmission</strong>
-                  <span class="status text-purple">Active</span>
-                  <span class="time" id="tx-time-active">--:--:--</span>
-                </div>
-                <div class="line dashed"></div>
-                <div class="step pending">
-                  <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
-                  <strong class="name">Delivery</strong>
-                  <span class="status text-amber">In Progress</span>
-                  <span class="time" id="tx-time-delivery">--:--:--</span>
-                </div>
-              </div>
-              <div class="transmission-details">
-                <div class="detail-box">
-                  <span class="label">ACTIVE CHANNEL</span>
-                  <strong class="value" id="tx-channel">--</strong>
-                </div>
-                <div class="detail-box">
-                  <span class="label">POWER REQUESTED</span>
-                  <strong class="value" id="tx-power-req">-- W</strong>
-                </div>
-                <div class="detail-box">
-                  <span class="label">DURATION</span>
-                  <strong class="value" id="tx-duration">--:--:--</strong>
-                </div>
-                <div class="detail-box">
-                  <span class="label">ELAPSED TIME</span>
-                  <strong class="value text-green" id="tx-elapsed">--:--:--</strong>
-                </div>
-                <div class="detail-box">
-                  <span class="label">STATUS</span>
-                  <strong class="value text-green" id="tx-status">Inactive <span class="dot red"></span></strong>
-                </div>
-                <div class="menu-dots"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ROW 2 -->
-          <div class="row row-2">
-            <!-- ENERGY FLOW -->
-            <div class="card energy-flow">
-              <div class="card-header">
-                <h2>ENERGY FLOW</h2>
-              </div>
-              <div class="flow-diagram">
-                <!-- 1. Grid Station -->
-                <div class="flow-node">
-                  <span class="node-label">Grid Station</span>
-                  <div class="custom-icon-wrapper cyan-glow">
-                    <svg viewBox="0 0 100 100" class="premium-svg">
-                      <defs>
-                        <linearGradient id="gridGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stop-color="#1A2B4C"/>
-                          <stop offset="100%" stop-color="#0A1128"/>
-                        </linearGradient>
-                        <linearGradient id="cyanNeon" x1="0%" y1="0%" x2="0%" y2="100%">
-                          <stop offset="0%" stop-color="#00FFFF"/>
-                          <stop offset="100%" stop-color="#0088AA"/>
-                        </linearGradient>
-                        <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
-                          <feGaussianBlur stdDeviation="3" result="blur" />
-                          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                        </filter>
-                      </defs>
-                      <polygon points="10,70 50,90 90,70 90,30 50,10 10,30" fill="url(#gridGrad)" stroke="#00FFFF" stroke-width="1.5" stroke-opacity="0.5"/>
-                      <path d="M25,50 L35,25 L45,50 Z" fill="url(#gridGrad)" stroke="url(#cyanNeon)" stroke-width="1.5"/>
-                      <path d="M55,60 L65,30 L75,60 Z" fill="url(#gridGrad)" stroke="url(#cyanNeon)" stroke-width="1.5"/>
-                      <ellipse cx="50" cy="50" rx="12" ry="6" fill="none" stroke="#00FFFF" stroke-width="2" filter="url(#cyanGlow)"/>
-                      <ellipse cx="50" cy="40" rx="8" ry="4" fill="none" stroke="#00FFFF" stroke-width="1.5" filter="url(#cyanGlow)"/>
-                      <line x1="50" y1="20" x2="50" y2="40" stroke="#00FFFF" stroke-width="2" filter="url(#cyanGlow)"/>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="flow-link dashed-cyan animated-link"></div>
-
-                <!-- 2. Transmission Channel -->
-                <div class="flow-node">
-                  <span class="node-label">Transmission Channel<br><small>Channel 1</small></span>
-                  <div class="custom-icon-wrapper cyan-glow">
-                    <svg viewBox="0 0 100 100" class="premium-svg">
-                      <defs>
-                        <filter id="purpleGlow" x="-20%" y="-20%" width="140%" height="140%">
-                          <feGaussianBlur stdDeviation="3" result="blur" />
-                          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                        </filter>
-                      </defs>
-                      <polygon points="30,90 70,90 60,30 40,30" fill="none" stroke="#00D9FF" stroke-width="1.5" stroke-opacity="0.8"/>
-                      <line x1="35" y1="75" x2="65" y2="75" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.5"/>
-                      <line x1="37" y1="60" x2="63" y2="60" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.5"/>
-                      <line x1="39" y1="45" x2="61" y2="45" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.5"/>
-                      <line x1="30" y1="90" x2="65" y2="75" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
-                      <line x1="70" y1="90" x2="35" y2="75" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
-                      <line x1="35" y1="75" x2="63" y2="60" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
-                      <line x1="65" y1="75" x2="37" y2="60" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
-                      <line x1="37" y1="60" x2="61" y2="45" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
-                      <line x1="63" y1="60" x2="39" y2="45" stroke="#00D9FF" stroke-width="1" stroke-opacity="0.3"/>
-                      <line x1="20" y1="30" x2="80" y2="30" stroke="#A855F7" stroke-width="2" filter="url(#purpleGlow)"/>
-                      <line x1="25" y1="20" x2="75" y2="20" stroke="#A855F7" stroke-width="2" filter="url(#purpleGlow)"/>
-                      <circle cx="20" cy="35" r="2" fill="#00D9FF" filter="url(#cyanGlow)"/>
-                      <circle cx="80" cy="35" r="2" fill="#00D9FF" filter="url(#cyanGlow)"/>
-                      <circle cx="25" cy="25" r="2" fill="#00D9FF" filter="url(#cyanGlow)"/>
-                      <circle cx="75" cy="25" r="2" fill="#00D9FF" filter="url(#cyanGlow)"/>
-                      <line x1="50" y1="30" x2="50" y2="5" stroke="#00D9FF" stroke-width="2" filter="url(#cyanGlow)"/>
-                      <circle cx="50" cy="5" r="3" fill="#A855F7" filter="url(#purpleGlow)"/>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="flow-link solid-cyan animated-link-solid"></div>
-
-                <!-- 3. AES-256 Tunnel -->
-                <div class="flow-node center-shield">
-                  <span class="node-label">AES-256 Secure Tunnel</span>
-                  <div class="custom-icon-wrapper tunnel-glow">
-                    <svg viewBox="0 0 100 100" class="premium-svg">
-                      <defs>
-                        <radialGradient id="shieldGrad" cx="50%" cy="50%" r="50%">
-                          <stop offset="0%" stop-color="rgba(0, 217, 255, 0.2)"/>
-                          <stop offset="100%" stop-color="rgba(0, 0, 0, 0)"/>
-                        </radialGradient>
-                      </defs>
-                      <circle cx="50" cy="50" r="45" fill="url(#shieldGrad)" stroke="rgba(0, 217, 255, 0.3)" stroke-width="1"/>
-                      <polygon points="50,15 80,32.5 80,67.5 50,85 20,67.5 20,32.5" fill="none" stroke="rgba(0, 217, 255, 0.15)" stroke-width="2"/>
-                      <polygon points="50,5 90,28 90,72 50,95 10,72 10,28" fill="none" stroke="rgba(0, 217, 255, 0.05)" stroke-width="1"/>
-                      <path d="M50,25 L75,35 L75,55 C75,70 60,82 50,88 C40,82 25,70 25,55 L25,35 Z" fill="rgba(6, 8, 14, 0.8)" stroke="#00D9FF" stroke-width="3" filter="url(#cyanGlow)"/>
-                      <rect x="42" y="50" width="16" height="12" rx="2" fill="none" stroke="#A855F7" stroke-width="2" filter="url(#purpleGlow)"/>
-                      <path d="M45,50 V44 A5,5 0 0,1 55,44 V50" fill="none" stroke="#A855F7" stroke-width="2" filter="url(#purpleGlow)"/>
-                      <circle cx="50" cy="56" r="2" fill="#A855F7"/>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="flow-link solid-purple animated-link-solid-purple"></div>
-
-                <!-- 4. Home Relay -->
-                <div class="flow-node">
-                  <span class="node-label">Home Relay<br><small>N16R8-ESP32</small></span>
-                  <div class="custom-icon-wrapper purple-glow">
-                    <svg viewBox="0 0 100 100" class="premium-svg">
-                      <rect x="25" y="20" width="50" height="60" rx="4" fill="#0A1128" stroke="#A855F7" stroke-width="2" stroke-opacity="0.6"/>
-                      <rect x="30" y="25" width="40" height="20" rx="2" fill="#05070D" stroke="#A855F7" stroke-width="1"/>
-                      <rect x="35" y="30" width="30" height="10" fill="#1A1C23" stroke="#555" stroke-width="1"/>
-                      <circle cx="35" cy="65" r="3" fill="#00FF88" filter="url(#cyanGlow)"/>
-                      <circle cx="45" cy="65" r="3" fill="#A855F7" filter="url(#purpleGlow)"/>
-                      <circle cx="55" cy="65" r="3" fill="#FF4D4D"/>
-                      <circle cx="65" cy="65" r="3" fill="#333"/>
-                      <line x1="20" y1="30" x2="25" y2="30" stroke="#A855F7" stroke-width="2"/>
-                      <line x1="20" y1="40" x2="25" y2="40" stroke="#A855F7" stroke-width="2"/>
-                      <line x1="20" y1="50" x2="25" y2="50" stroke="#A855F7" stroke-width="2"/>
-                      <line x1="20" y1="60" x2="25" y2="60" stroke="#A855F7" stroke-width="2"/>
-                      <line x1="75" y1="30" x2="80" y2="30" stroke="#A855F7" stroke-width="2"/>
-                      <line x1="75" y1="40" x2="80" y2="40" stroke="#A855F7" stroke-width="2"/>
-                      <line x1="75" y1="50" x2="80" y2="50" stroke="#A855F7" stroke-width="2"/>
-                      <line x1="75" y1="60" x2="80" y2="60" stroke="#A855F7" stroke-width="2"/>
-                      <path d="M40,12 Q50,5 60,12" fill="none" stroke="#00D9FF" stroke-width="1.5" filter="url(#cyanGlow)"/>
-                      <path d="M44,16 Q50,11 56,16" fill="none" stroke="#00D9FF" stroke-width="1.5" filter="url(#cyanGlow)"/>
-                      <circle cx="50" cy="18" r="1.5" fill="#00D9FF"/>
-                    </svg>
-                  </div>
-                </div>
-
-                <div class="flow-link dashed-purple animated-link-purple"></div>
-
-                <!-- 5. Your Home -->
-                <div class="flow-node">
-                  <span class="node-label">Your Home<br><small>HOME-117</small></span>
-                  <div class="custom-icon-wrapper purple-glow">
-                    <svg viewBox="0 0 100 100" class="premium-svg">
-                      <polygon points="20,55 80,55 80,90 20,90" fill="#0A0D15" stroke="#A855F7" stroke-width="1.5"/>
-                      <polygon points="10,55 50,20 90,55 80,55 50,30 20,55" fill="#00D9FF" stroke="#00D9FF" stroke-width="1" filter="url(#cyanGlow)"/>
-                      <polygon points="20,55 50,30 80,55" fill="rgba(0, 217, 255, 0.1)"/>
-                      <rect x="42" y="65" width="16" height="25" fill="#05070D" stroke="#A855F7" stroke-width="1.5"/>
-                      <circle cx="54" cy="78" r="1.5" fill="#00D9FF" filter="url(#cyanGlow)"/>
-                      <rect x="28" y="60" width="10" height="15" fill="rgba(0, 217, 255, 0.2)" stroke="#00D9FF" stroke-width="1" filter="url(#cyanGlow)"/>
-                      <line x1="33" y1="60" x2="33" y2="75" stroke="#00D9FF" stroke-width="0.5"/>
-                      <line x1="28" y1="67.5" x2="38" y2="67.5" stroke="#00D9FF" stroke-width="0.5"/>
-                      <rect x="62" y="60" width="10" height="15" fill="rgba(0, 217, 255, 0.2)" stroke="#00D9FF" stroke-width="1" filter="url(#cyanGlow)"/>
-                      <line x1="67" y1="60" x2="67" y2="75" stroke="#00D9FF" stroke-width="0.5"/>
-                      <line x1="62" y1="67.5" x2="72" y2="67.5" stroke="#00D9FF" stroke-width="0.5"/>
-                      <ellipse cx="50" cy="15" rx="8" ry="3" fill="none" stroke="#A855F7" stroke-width="1.5" filter="url(#purpleGlow)"/>
-                      <line x1="50" y1="15" x2="50" y2="20" stroke="#A855F7" stroke-width="1.5"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- QUICK ACTIONS -->
-            <div class="card quick-actions">
-              <div class="card-header">
-                <h2>QUICK ACTIONS</h2>
-              </div>
-              <div class="actions-grid">
-                <button class="action-btn">
-                  <svg class="text-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                  Request Electricity
-                </button>
-                <button class="action-btn">
-                  <svg class="text-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                  View Live Monitoring
-                </button>
-                <button class="action-btn">
-                  <svg class="text-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                  Transmission Status
-                </button>
-                <button class="action-btn">
-                  <svg class="text-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
-                  Safety Verification
-                </button>
-                <button class="action-btn">
-                  <svg class="text-purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-                  Energy Analytics
-                </button>
-                <button class="action-btn">
-                  <svg class="text-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                  Activity Timeline
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- ROW 3 LIVE METRICS -->
-          <div class="metrics-row">
-            <div class="metric-card">
-              <div class="mc-icon text-cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
-              <div class="mc-info">
-                <span class="label">Voltage</span>
-                <strong class="value">229.4 V</strong>
-              </div>
-              <div class="mc-wave wave-cyan"></div>
-            </div>
-            <div class="metric-card">
-              <div class="mc-icon text-cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><path d="M9 9h6v6H9z"></path></svg></div>
-              <div class="mc-info">
-                <span class="label">Current</span>
-                <strong class="value">2.47 A</strong>
-              </div>
-              <div class="mc-wave wave-cyan"></div>
-            </div>
-            <div class="metric-card">
-              <div class="mc-icon text-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
-              <div class="mc-info">
-                <span class="label">Frequency</span>
-                <strong class="value">50.02 Hz</strong>
-              </div>
-              <div class="mc-wave wave-purple"></div>
-            </div>
-            <div class="metric-card">
-              <div class="mc-icon text-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg></div>
-              <div class="mc-info">
-                <span class="label">Power Factor</span>
-                <strong class="value">0.98</strong>
-              </div>
-              <div class="mc-wave wave-amber"></div>
-            </div>
-            <div class="metric-card">
-              <div class="mc-icon text-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path></svg></div>
-              <div class="mc-info">
-                <span class="label">Temperature</span>
-                <strong class="value">32.4 °C</strong>
-              </div>
-              <div class="mc-wave wave-red"></div>
-            </div>
-            <div class="metric-card">
-              <div class="mc-icon text-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg></div>
-              <div class="mc-info">
-                <span class="label">Signal Strength</span>
-                <strong class="value">-42 dBm</strong>
-              </div>
-              <div class="mc-wave wave-green"></div>
-            </div>
-          </div>
-          
-        </div>
-      </div>
-
-
-      
-      <!-- REQUEST ELECTRICITY VIEW -->
-      <div id="view-request" class="dashboard-scroll view" style="display: none;">
+# Page 1: Request Electricity
+view_request = """      <div id="view-request" class="dashboard-scroll view" style="display: none;">
         <div class="page-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <h1 style="font-size: 24px; color: #fff; margin: 0; font-family: var(--font-space); letter-spacing: 1px;">Request Electricity</h1>
@@ -673,10 +173,10 @@
              </div>
            </div>
         </div>
-      </div>
+      </div>"""
 
-            <!-- TRANSMISSION STATUS VIEW -->
-      <div id="view-transmission" class="dashboard-scroll view" style="display: none;">
+# Page 2: Transmission Status
+view_transmission = """      <div id="view-transmission" class="dashboard-scroll view" style="display: none;">
         <div class="page-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <h1 style="font-size: 24px; color: #fff; margin: 0; font-family: var(--font-space); letter-spacing: 1px;">Transmission Status</h1>
@@ -863,9 +363,10 @@
              </div>
            </div>
         </div>
-      </div>
+      </div>"""
 
-            <!-- LIVE MONITORING VIEW -->
+# Insert Live Monitoring view completely
+view_monitoring = """      <!-- LIVE MONITORING VIEW -->
       <div id="view-monitoring" class="dashboard-scroll view" style="display: none;">
         <div class="page-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
           <div>
@@ -977,10 +478,115 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>"""
 
-      <!-- SAFETY & SECURITY VIEW -->
-      <div id="view-safety" class="dashboard-scroll view" style="display: none;">
+# Page 5: Energy Usage
+view_usage = """      <div id="view-usage" class="dashboard-scroll view" style="display: none;">
+        <div class="page-header" style="margin-bottom: 24px;">
+          <h1 style="font-size: 24px; color: #fff; margin: 0; font-family: var(--font-space); letter-spacing: 1px;">Energy Usage</h1>
+          <p style="color: var(--text-muted); margin: 5px 0 0 0;">Consumption analytics for HOME-117</p>
+        </div>
+
+        <div class="grid-container" style="display: grid; gap: 24px;">
+           <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+              <div class="card" style="padding: 20px;">
+                 <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Today</span>
+                 <strong style="display: block; font-size: 24px; color: #fff; margin-top: 8px;">2.48 <span style="font-size: 14px; color: #00e5ff;">kWh</span></strong>
+                 <div style="color: #10b981; font-size: 14px; margin-top: 5px;">₹ 12.48</div>
+              </div>
+              <div class="card" style="padding: 20px;">
+                 <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">This Week</span>
+                 <strong style="display: block; font-size: 24px; color: #fff; margin-top: 8px;">17.3 <span style="font-size: 14px; color: #00e5ff;">kWh</span></strong>
+                 <div style="color: #10b981; font-size: 14px; margin-top: 5px;">₹ 87.20</div>
+              </div>
+              <div class="card" style="padding: 20px;">
+                 <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">This Month</span>
+                 <strong style="display: block; font-size: 24px; color: #fff; margin-top: 8px;">68.4 <span style="font-size: 14px; color: #00e5ff;">kWh</span></strong>
+                 <div style="color: #10b981; font-size: 14px; margin-top: 5px;">₹ 344.52</div>
+              </div>
+              <div class="card" style="padding: 20px;">
+                 <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Avg Daily</span>
+                 <strong style="display: block; font-size: 24px; color: #fff; margin-top: 8px;">2.21 <span style="font-size: 14px; color: #00e5ff;">kWh</span></strong>
+                 <div style="color: #10b981; font-size: 14px; margin-top: 5px;">₹ 11.14</div>
+              </div>
+           </div>
+
+           <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+              <div class="card" style="padding: 24px;">
+                 <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                   <h2 style="font-size: 14px; color: var(--text-muted); letter-spacing: 1px;">USAGE GRAPH (LAST 7 DAYS)</h2>
+                   <div style="display: flex; gap: 10px;">
+                     <button class="action-btn" style="padding: 5px 10px; font-size: 12px; border-color: #00e5ff; color: #00e5ff;">Daily</button>
+                     <button class="action-btn" style="padding: 5px 10px; font-size: 12px;">Weekly</button>
+                     <button class="action-btn" style="padding: 5px 10px; font-size: 12px;">Monthly</button>
+                   </div>
+                 </div>
+                 <div style="height: 250px; display: flex; align-items: flex-end; justify-content: space-between; padding-top: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 50%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Mon</span></div>
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 70%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Tue</span></div>
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 60%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Wed</span></div>
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 85%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Thu</span></div>
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 55%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Fri</span></div>
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 75%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Sat</span></div>
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 80%; width: 20px; background: #8b5cf6; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Sun</span></div>
+                 </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 24px;">
+                <div class="card" style="padding: 24px;">
+                   <h2 style="font-size: 14px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 20px;">TIME-OF-DAY BREAKDOWN</h2>
+                   <div style="display: flex; flex-direction: column; gap: 15px;">
+                     <div style="display: flex; justify-content: space-between; align-items: center;">
+                       <span style="color: #fff; font-size: 14px; display: flex; align-items: center; gap: 10px;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #f59e0b;"></div> Morning (6am-12pm)</span>
+                       <strong style="color: #fff;">0.62 kWh</strong>
+                     </div>
+                     <div style="display: flex; justify-content: space-between; align-items: center;">
+                       <span style="color: #fff; font-size: 14px; display: flex; align-items: center; gap: 10px;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #00e5ff;"></div> Afternoon (12pm-6pm)</span>
+                       <strong style="color: #fff;">0.74 kWh</strong>
+                     </div>
+                     <div style="display: flex; justify-content: space-between; align-items: center;">
+                       <span style="color: #fff; font-size: 14px; display: flex; align-items: center; gap: 10px;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #8b5cf6;"></div> Evening (6pm-12am)</span>
+                       <strong style="color: #fff;">0.91 kWh</strong>
+                     </div>
+                     <div style="display: flex; justify-content: space-between; align-items: center;">
+                       <span style="color: #fff; font-size: 14px; display: flex; align-items: center; gap: 10px;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #3b82f6;"></div> Night (12am-6am)</span>
+                       <strong style="color: #fff;">0.21 kWh</strong>
+                     </div>
+                   </div>
+                </div>
+                <div class="card" style="padding: 24px;">
+                   <h2 style="font-size: 14px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 20px;">EFFICIENCY TRENDS</h2>
+                   <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                     <span style="color: var(--text-muted); font-size: 12px;">Average: <strong style="color: #fff;">96.2%</strong></span>
+                     <span style="color: var(--text-muted); font-size: 12px;">Current: <strong style="color: #10b981;">96.8%</strong></span>
+                     <span style="color: var(--text-muted); font-size: 12px;">Best: <strong style="color: #00e5ff;">99.1%</strong></span>
+                   </div>
+                </div>
+              </div>
+           </div>
+
+           <div class="card" style="padding: 24px;">
+              <h2 style="font-size: 14px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 20px;">USAGE TIPS</h2>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); padding: 15px; border-radius: 8px;">
+                  <strong style="color: #f59e0b; display: block; margin-bottom: 8px;">Peak Usage Detected</strong>
+                  <p style="color: #fff; font-size: 13px; line-height: 1.5; margin: 0;">Peak usage detected 6-9pm. Schedule large loads before 5pm to save credits.</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 15px; border-radius: 8px;">
+                  <strong style="color: #10b981; display: block; margin-bottom: 8px;">Optimal Performance</strong>
+                  <p style="color: #fff; font-size: 13px; line-height: 1.5; margin: 0;">Your efficiency is above 96%. Your relay hardware is performing optimally.</p>
+                </div>
+                <div style="background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.2); padding: 15px; border-radius: 8px;">
+                  <strong style="color: #00e5ff; display: block; margin-bottom: 8px;">Budget Alert</strong>
+                  <p style="color: #fff; font-size: 13px; line-height: 1.5; margin: 0;">At this rate, this month's cost will be ₹344. Within normal range.</p>
+                </div>
+              </div>
+           </div>
+        </div>
+      </div>"""
+
+# Page 6: Safety & Security
+view_safety = """      <div id="view-safety" class="dashboard-scroll view" style="display: none;">
         <div class="page-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <h1 style="font-size: 24px; color: #fff; margin: 0; font-family: var(--font-space); letter-spacing: 1px;">Safety & Security</h1>
@@ -1141,10 +747,100 @@
              </div>
            </div>
         </div>
-      </div>
+      </div>"""
 
-            <!-- DEVICE & RELAY VIEW -->
-      <div id="view-device" class="dashboard-scroll view" style="display: none;">
+# Page 7: Activity Timeline
+view_timeline = """      <div id="view-timeline" class="dashboard-scroll view" style="display: none;">
+        <div class="page-header" style="margin-bottom: 24px;">
+          <h1 style="font-size: 24px; color: #fff; margin: 0; font-family: var(--font-space); letter-spacing: 1px;">Activity Timeline</h1>
+          <p style="color: var(--text-muted); margin: 5px 0 0 0;">Full event history for HOME-117</p>
+        </div>
+
+        <div class="grid-container" style="display: grid; gap: 24px; max-width: 800px; margin: 0 auto;">
+           <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+             <button class="action-btn" style="border-color: #00e5ff; color: #00e5ff;">All</button>
+             <button class="action-btn">Transmissions</button>
+             <button class="action-btn">Security</button>
+             <button class="action-btn">System</button>
+             <button class="action-btn">Wallet</button>
+             <button class="action-btn">Alerts</button>
+           </div>
+
+           <div class="card" style="padding: 30px;">
+              <div style="position: relative; padding-left: 30px;">
+                 <!-- Line -->
+                 <div style="position: absolute; left: 11px; top: 10px; bottom: 0; width: 2px; background: rgba(255,255,255,0.1);"></div>
+
+                 <!-- Item 1 -->
+                 <div style="position: relative; margin-bottom: 30px;">
+                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #00e5ff; box-shadow: 0 0 10px #00e5ff;"></div>
+                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Today, 16:30:15</div>
+                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">⚡ Transmission Started</div>
+                   <div style="color: #aaa; font-size: 14px;">Channel 1 assigned, 1000W requested</div>
+                 </div>
+
+                 <!-- Item 2 -->
+                 <div style="position: relative; margin-bottom: 30px;">
+                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #8b5cf6;"></div>
+                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Today, 16:30:12</div>
+                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">🔐 OTP Verified</div>
+                   <div style="color: #aaa; font-size: 14px;">Authentication successful for session #TRX-4481</div>
+                 </div>
+                 
+                 <!-- Item 3 -->
+                 <div style="position: relative; margin-bottom: 30px;">
+                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #f59e0b;"></div>
+                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Today, 16:30:05</div>
+                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">💳 Credits Deducted</div>
+                   <div style="color: #aaa; font-size: 14px;">12.48 credits reserved for session #TRX-4481</div>
+                 </div>
+
+                 <!-- Item 4 -->
+                 <div style="position: relative; margin-bottom: 30px;">
+                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
+                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Today, 16:15:00</div>
+                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">🔑 Encryption Key Rotated</div>
+                   <div style="color: #aaa; font-size: 14px;">Scheduled AES-256 rotation completed</div>
+                 </div>
+
+                 <!-- Item 5 -->
+                 <div style="position: relative; margin-bottom: 30px;">
+                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #00e5ff;"></div>
+                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Today, 16:05:22</div>
+                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">👤 User Login</div>
+                   <div style="color: #aaa; font-size: 14px;">Aditya Raj logged in from Chrome/Windows</div>
+                 </div>
+
+                 <!-- Item 6 -->
+                 <div style="position: relative; margin-bottom: 30px;">
+                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
+                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Yesterday, 19:00:00</div>
+                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">✅ Transmission Completed</div>
+                   <div style="color: #aaa; font-size: 14px;">0.50 kWh delivered, 98.1% efficiency (Session #TRX-4480)</div>
+                 </div>
+
+                 <!-- Item 7 -->
+                 <div style="position: relative; margin-bottom: 30px;">
+                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
+                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Yesterday, 18:00:00</div>
+                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">🔄 Relay Connected</div>
+                   <div style="color: #aaa; font-size: 14px;">N16R8-ESP32 relay established successfully</div>
+                 </div>
+
+                 <!-- Item 8 -->
+                 <div style="position: relative; margin-bottom: 30px;">
+                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #3b82f6;"></div>
+                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Yesterday, 12:00:00</div>
+                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">⚙️ System Health Check</div>
+                   <div style="color: #aaa; font-size: 14px;">All systems nominal (100%)</div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </div>"""
+
+# Page 8: Device & Relay
+view_device = """      <div id="view-device" class="dashboard-scroll view" style="display: none;">
         <div class="page-header" style="margin-bottom: 24px;">
           <h1 style="font-size: 24px; color: #fff; margin: 0; font-family: var(--font-space); letter-spacing: 1px;">Device & Relay</h1>
           <p style="color: var(--text-muted); margin: 5px 0 0 0;">Hardware management for N16R8-ESP32</p>
@@ -1278,10 +974,10 @@
              </table>
            </div>
         </div>
-      </div>
+      </div>"""
 
-            <!-- WALLET VIEW -->
-      <div id="view-wallet" class="dashboard-scroll view" style="display: none;">
+# Page 9: Energy Wallet
+view_wallet = """      <div id="view-wallet" class="dashboard-scroll view" style="display: none;">
         <div class="page-header" style="margin-bottom: 24px;">
           <h1 style="font-size: 24px; color: #fff; margin: 0; font-family: var(--font-space); letter-spacing: 1px;">Energy Wallet</h1>
           <p style="color: var(--text-muted); margin: 5px 0 0 0;">Manage your transmission credits</p>
@@ -1418,205 +1114,10 @@
              </div>
            </div>
         </div>
-      </div>
+      </div>"""
 
-            <!-- TIMELINE VIEW -->
-      <div id="view-timeline" class="dashboard-scroll view" style="display: none;">
-        <div class="page-header" style="margin-bottom: 24px;">
-          <h1 style="font-size: 24px; color: #fff; margin: 0; font-family: var(--font-space); letter-spacing: 1px;">Activity Timeline</h1>
-          <p style="color: var(--text-muted); margin: 5px 0 0 0;">Full event history for HOME-117</p>
-        </div>
-
-        <div class="grid-container" style="display: grid; gap: 24px; max-width: 800px; margin: 0 auto;">
-           <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-             <button class="action-btn" style="border-color: #00e5ff; color: #00e5ff;">All</button>
-             <button class="action-btn">Transmissions</button>
-             <button class="action-btn">Security</button>
-             <button class="action-btn">System</button>
-             <button class="action-btn">Wallet</button>
-             <button class="action-btn">Alerts</button>
-           </div>
-
-           <div class="card" style="padding: 30px;">
-              <div style="position: relative; padding-left: 30px;">
-                 <!-- Line -->
-                 <div style="position: absolute; left: 11px; top: 10px; bottom: 0; width: 2px; background: rgba(255,255,255,0.1);"></div>
-
-                 <!-- Item 1 -->
-                 <div style="position: relative; margin-bottom: 30px;">
-                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #00e5ff; box-shadow: 0 0 10px #00e5ff;"></div>
-                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Today, 16:30:15</div>
-                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">⚡ Transmission Started</div>
-                   <div style="color: #aaa; font-size: 14px;">Channel 1 assigned, 1000W requested</div>
-                 </div>
-
-                 <!-- Item 2 -->
-                 <div style="position: relative; margin-bottom: 30px;">
-                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #8b5cf6;"></div>
-                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Today, 16:30:12</div>
-                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">🔐 OTP Verified</div>
-                   <div style="color: #aaa; font-size: 14px;">Authentication successful for session #TRX-4481</div>
-                 </div>
-                 
-                 <!-- Item 3 -->
-                 <div style="position: relative; margin-bottom: 30px;">
-                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #f59e0b;"></div>
-                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Today, 16:30:05</div>
-                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">💳 Credits Deducted</div>
-                   <div style="color: #aaa; font-size: 14px;">12.48 credits reserved for session #TRX-4481</div>
-                 </div>
-
-                 <!-- Item 4 -->
-                 <div style="position: relative; margin-bottom: 30px;">
-                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
-                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Today, 16:15:00</div>
-                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">🔑 Encryption Key Rotated</div>
-                   <div style="color: #aaa; font-size: 14px;">Scheduled AES-256 rotation completed</div>
-                 </div>
-
-                 <!-- Item 5 -->
-                 <div style="position: relative; margin-bottom: 30px;">
-                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #00e5ff;"></div>
-                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Today, 16:05:22</div>
-                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">👤 User Login</div>
-                   <div style="color: #aaa; font-size: 14px;">Aditya Raj logged in from Chrome/Windows</div>
-                 </div>
-
-                 <!-- Item 6 -->
-                 <div style="position: relative; margin-bottom: 30px;">
-                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
-                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Yesterday, 19:00:00</div>
-                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">✅ Transmission Completed</div>
-                   <div style="color: #aaa; font-size: 14px;">0.50 kWh delivered, 98.1% efficiency (Session #TRX-4480)</div>
-                 </div>
-
-                 <!-- Item 7 -->
-                 <div style="position: relative; margin-bottom: 30px;">
-                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
-                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Yesterday, 18:00:00</div>
-                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">🔄 Relay Connected</div>
-                   <div style="color: #aaa; font-size: 14px;">N16R8-ESP32 relay established successfully</div>
-                 </div>
-
-                 <!-- Item 8 -->
-                 <div style="position: relative; margin-bottom: 30px;">
-                   <div style="position: absolute; left: -24px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #3b82f6;"></div>
-                   <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 5px;">Yesterday, 12:00:00</div>
-                   <div style="color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px;">⚙️ System Health Check</div>
-                   <div style="color: #aaa; font-size: 14px;">All systems nominal (100%)</div>
-                 </div>
-              </div>
-           </div>
-        </div>
-      </div>
-
-            <!-- USAGE VIEW -->
-      <div id="view-usage" class="dashboard-scroll view" style="display: none;">
-        <div class="page-header" style="margin-bottom: 24px;">
-          <h1 style="font-size: 24px; color: #fff; margin: 0; font-family: var(--font-space); letter-spacing: 1px;">Energy Usage</h1>
-          <p style="color: var(--text-muted); margin: 5px 0 0 0;">Consumption analytics for HOME-117</p>
-        </div>
-
-        <div class="grid-container" style="display: grid; gap: 24px;">
-           <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
-              <div class="card" style="padding: 20px;">
-                 <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Today</span>
-                 <strong style="display: block; font-size: 24px; color: #fff; margin-top: 8px;">2.48 <span style="font-size: 14px; color: #00e5ff;">kWh</span></strong>
-                 <div style="color: #10b981; font-size: 14px; margin-top: 5px;">₹ 12.48</div>
-              </div>
-              <div class="card" style="padding: 20px;">
-                 <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">This Week</span>
-                 <strong style="display: block; font-size: 24px; color: #fff; margin-top: 8px;">17.3 <span style="font-size: 14px; color: #00e5ff;">kWh</span></strong>
-                 <div style="color: #10b981; font-size: 14px; margin-top: 5px;">₹ 87.20</div>
-              </div>
-              <div class="card" style="padding: 20px;">
-                 <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">This Month</span>
-                 <strong style="display: block; font-size: 24px; color: #fff; margin-top: 8px;">68.4 <span style="font-size: 14px; color: #00e5ff;">kWh</span></strong>
-                 <div style="color: #10b981; font-size: 14px; margin-top: 5px;">₹ 344.52</div>
-              </div>
-              <div class="card" style="padding: 20px;">
-                 <span style="color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Avg Daily</span>
-                 <strong style="display: block; font-size: 24px; color: #fff; margin-top: 8px;">2.21 <span style="font-size: 14px; color: #00e5ff;">kWh</span></strong>
-                 <div style="color: #10b981; font-size: 14px; margin-top: 5px;">₹ 11.14</div>
-              </div>
-           </div>
-
-           <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
-              <div class="card" style="padding: 24px;">
-                 <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                   <h2 style="font-size: 14px; color: var(--text-muted); letter-spacing: 1px;">USAGE GRAPH (LAST 7 DAYS)</h2>
-                   <div style="display: flex; gap: 10px;">
-                     <button class="action-btn" style="padding: 5px 10px; font-size: 12px; border-color: #00e5ff; color: #00e5ff;">Daily</button>
-                     <button class="action-btn" style="padding: 5px 10px; font-size: 12px;">Weekly</button>
-                     <button class="action-btn" style="padding: 5px 10px; font-size: 12px;">Monthly</button>
-                   </div>
-                 </div>
-                 <div style="height: 250px; display: flex; align-items: flex-end; justify-content: space-between; padding-top: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 50%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Mon</span></div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 70%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Tue</span></div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 60%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Wed</span></div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 85%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Thu</span></div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 55%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Fri</span></div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 75%; width: 20px; background: #00e5ff; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Sat</span></div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 10%;"><div style="height: 80%; width: 20px; background: #8b5cf6; border-radius: 4px 4px 0 0;"></div><span style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">Sun</span></div>
-                 </div>
-              </div>
-
-              <div style="display: flex; flex-direction: column; gap: 24px;">
-                <div class="card" style="padding: 24px;">
-                   <h2 style="font-size: 14px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 20px;">TIME-OF-DAY BREAKDOWN</h2>
-                   <div style="display: flex; flex-direction: column; gap: 15px;">
-                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                       <span style="color: #fff; font-size: 14px; display: flex; align-items: center; gap: 10px;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #f59e0b;"></div> Morning (6am-12pm)</span>
-                       <strong style="color: #fff;">0.62 kWh</strong>
-                     </div>
-                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                       <span style="color: #fff; font-size: 14px; display: flex; align-items: center; gap: 10px;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #00e5ff;"></div> Afternoon (12pm-6pm)</span>
-                       <strong style="color: #fff;">0.74 kWh</strong>
-                     </div>
-                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                       <span style="color: #fff; font-size: 14px; display: flex; align-items: center; gap: 10px;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #8b5cf6;"></div> Evening (6pm-12am)</span>
-                       <strong style="color: #fff;">0.91 kWh</strong>
-                     </div>
-                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                       <span style="color: #fff; font-size: 14px; display: flex; align-items: center; gap: 10px;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #3b82f6;"></div> Night (12am-6am)</span>
-                       <strong style="color: #fff;">0.21 kWh</strong>
-                     </div>
-                   </div>
-                </div>
-                <div class="card" style="padding: 24px;">
-                   <h2 style="font-size: 14px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 20px;">EFFICIENCY TRENDS</h2>
-                   <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                     <span style="color: var(--text-muted); font-size: 12px;">Average: <strong style="color: #fff;">96.2%</strong></span>
-                     <span style="color: var(--text-muted); font-size: 12px;">Current: <strong style="color: #10b981;">96.8%</strong></span>
-                     <span style="color: var(--text-muted); font-size: 12px;">Best: <strong style="color: #00e5ff;">99.1%</strong></span>
-                   </div>
-                </div>
-              </div>
-           </div>
-
-           <div class="card" style="padding: 24px;">
-              <h2 style="font-size: 14px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 20px;">USAGE TIPS</h2>
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-                <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); padding: 15px; border-radius: 8px;">
-                  <strong style="color: #f59e0b; display: block; margin-bottom: 8px;">Peak Usage Detected</strong>
-                  <p style="color: #fff; font-size: 13px; line-height: 1.5; margin: 0;">Peak usage detected 6-9pm. Schedule large loads before 5pm to save credits.</p>
-                </div>
-                <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 15px; border-radius: 8px;">
-                  <strong style="color: #10b981; display: block; margin-bottom: 8px;">Optimal Performance</strong>
-                  <p style="color: #fff; font-size: 13px; line-height: 1.5; margin: 0;">Your efficiency is above 96%. Your relay hardware is performing optimally.</p>
-                </div>
-                <div style="background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.2); padding: 15px; border-radius: 8px;">
-                  <strong style="color: #00e5ff; display: block; margin-bottom: 8px;">Budget Alert</strong>
-                  <p style="color: #fff; font-size: 13px; line-height: 1.5; margin: 0;">At this rate, this month's cost will be ₹344. Within normal range.</p>
-                </div>
-              </div>
-           </div>
-        </div>
-      </div>
-
-            <!-- SETTINGS VIEW -->
-      <div id="view-settings" class="dashboard-scroll view" style="display: none;">
+# Page 10: Settings
+view_settings = """      <div id="view-settings" class="dashboard-scroll view" style="display: none;">
         <div class="page-header" style="margin-bottom: 24px;">
           <h1 style="font-size: 24px; color: #fff; margin: 0; font-family: var(--font-space); letter-spacing: 1px;">Settings</h1>
           <p style="color: var(--text-muted); margin: 5px 0 0 0;">Account & system preferences</p>
@@ -1738,91 +1239,24 @@
              </div>
            </div>
         </div>
-      </div>
+      </div>"""
 
-            <!-- BOTTOM SYSTEM FOOTER -->
-      <footer class="system-footer">
-        <div class="sys-item">
-          <svg class="text-green icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
-          <div class="sys-text">
-            <span class="label">SAFETY STATUS</span>
-            <strong class="value text-green">SAFE</strong>
-          </div>
-        </div>
-        <div class="sys-item">
-          <svg class="text-green icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          <div class="sys-text">
-            <span class="label">RELAY STATUS</span>
-            <strong class="value text-green">CLOSED</strong>
-          </div>
-        </div>
-        <div class="sys-item">
-          <svg class="text-green icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg>
-          <div class="sys-text">
-            <span class="label">CONNECTION QUALITY</span>
-            <strong class="value text-green">EXCELLENT <span class="bars"><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span></span></strong>
-          </div>
-        </div>
-        <div class="sys-item">
-          <svg class="text-green icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-          <div class="sys-text">
-            <span class="label">SYSTEM HEALTH</span>
-            <strong class="value">100%</strong>
-          </div>
-        </div>
-        <div class="sys-item">
-          <svg class="text-cyan icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          <div class="sys-text">
-            <span class="label">UPTIME</span>
-            <strong class="value" id="dash-uptime">--:--:--</strong>
-          </div>
-        </div>
-        <div class="sys-item emergency">
-          <button class="btn-emergency">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-            Emergency Disconnect
-          </button>
-        </div>
-      </footer>
-    </main>
-  </div>
+# Replace existing blocks
+content = replace_view(content, "      <!-- REQUEST ELECTRICITY VIEW -->", "      <!-- TRANSMISSION STATUS VIEW -->", view_request)
+content = replace_view(content, "      <!-- TRANSMISSION STATUS VIEW -->", "      <!-- SAFETY & SECURITY VIEW -->", view_transmission)
 
-  <!-- OTP MODAL -->
-  <div id="modal-otp" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center;">
-    <div class="card" style="width: 400px; box-shadow: 0 0 30px rgba(0,217,255,0.2);">
-      <div class="card-header"><h2>AUTHORIZATION REQUIRED</h2></div>
-      <div style="padding: 24px; text-align: center;">
-        <p style="color: var(--text-muted); margin-bottom: 20px;">Enter the 6-digit AES-256 key provided by the grid.</p>
-        <input type="text" id="otp-input" maxlength="6" style="background: var(--bg-color); color: var(--cyan); border: 1px solid var(--cyan); font-size: 24px; text-align: center; letter-spacing: 10px; width: 100%; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
-        <button id="btn-submit-otp" class="action-btn" style="width: 100%; justify-content: center; background: rgba(0,217,255,0.1); border-color: var(--cyan); color: var(--cyan);">Verify & Connect</button>
-      </div>
-    </div>
-  </div>
+# Insert Live monitoring before Safety & Security
+if "<!-- LIVE MONITORING VIEW -->" not in content:
+    content = content.replace("      <!-- SAFETY & SECURITY VIEW -->", f"{view_monitoring}\n\n      <!-- SAFETY & SECURITY VIEW -->")
 
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <script src="script_v3.js"></script>
+content = replace_view(content, "      <!-- SAFETY & SECURITY VIEW -->", "      <!-- DEVICE & RELAY VIEW -->", view_safety)
+content = replace_view(content, "      <!-- DEVICE & RELAY VIEW -->", "      <!-- WALLET VIEW -->", view_device)
+content = replace_view(content, "      <!-- WALLET VIEW -->", "      <!-- TIMELINE VIEW -->", view_wallet)
+content = replace_view(content, "      <!-- TIMELINE VIEW -->", "      <!-- USAGE VIEW -->", view_timeline)
+content = replace_view(content, "      <!-- USAGE VIEW -->", "      <!-- SETTINGS VIEW -->", view_usage)
+content = replace_view(content, "      <!-- SETTINGS VIEW -->", "      <!-- BOTTOM SYSTEM FOOTER -->", view_settings)
 
-      <!-- RESIDENT EVIL BOOT SEQUENCE OVERLAY -->
-      <div id="re-boot-sequence" style="display: none;">
-          <div class="crt-overlay"></div>
-          <div class="re-content">
-              <div class="re-logo-container">
-                  <svg viewBox="0 0 200 200" class="re-logo">
-                      <!-- Biohazard / Umbrella stylized octagon -->
-                      <polygon points="100,5 165,30 195,90 165,165 100,195 35,165 5,90 35,30" class="re-logo-path outer-poly" />
-                      <circle cx="100" cy="100" r="50" class="re-logo-path inner-circle" />
-                      <path d="M100,50 L100,150 M50,100 L150,100 M65,65 L135,135 M65,135 L135,65" class="re-logo-path cross-lines" />
-                  </svg>
-              </div>
-              <div class="re-terminal">
-                  <div class="re-line" id="re-line-1">> UMBRELLA_OS BOOT SEQUENCE INITIATED...</div>
-                  <div class="re-line" id="re-line-2">> WARNING: HIGH VOLTAGE TRANSMISSION PROTOCOL ENGAGED</div>
-                  <div class="re-line" id="re-line-3">> BYPASSING SAFETY INTERLOCKS...</div>
-                  <div class="re-line" id="re-line-4">> ESTABLISHING AES-256 TUNNEL...</div>
-                  <div class="re-line blink-red" id="re-line-5">SYSTEM OVERRIDE SUCCESSFUL.</div>
-              </div>
-          </div>
-      </div>
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write(content)
 
-</body>
-</html>
+print("Update complete")

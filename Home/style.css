@@ -237,6 +237,7 @@ svg {
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--panel-border);
   z-index: 10;
+  flex-shrink: 0;
 }
 .topbar-status {
   display: flex;

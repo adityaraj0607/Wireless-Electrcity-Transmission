@@ -3,17 +3,30 @@ WIRELESS ELECTRICITY TRANSMISSION — MASTER CONTROL SERVER
 Flask-SocketIO Bridge: Grid <-> Home <-> ESP32
 Inventors: Aditya Raj & Deepak Kumar Gupta | v3.0
 """
-import os, json, time, secrets, threading, random, sqlite3, requests
+import os, json, time, secrets, threading, random, sqlite3, requests, socket
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_cors import CORS
+
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except:
+        return '127.0.0.1'
+
+SERVER_IP = get_local_ip()
 
 app = Flask(__name__, static_folder=None)
 app.config['SECRET_KEY'] = secrets.token_hex(32)
 CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading',
                     ping_interval=5, ping_timeout=10)
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, 'database.db')
@@ -419,12 +432,16 @@ def on_join(data):
         elif room == 'home': S.home_connected = True
         elif room == 'grid_esp': S.grid_esp = True
         elif room == 'home_esp': S.home_esp = True
+        print(f"[NETWORK] SOCKET_CONNECTED: Client joined {room}")
+        db_log_event("NETWORK", f"SOCKET_CONNECTED: {room}")
         broadcast_state()
 
 @socketio.on('disconnect')
 def on_disconnect():
     room = CONNECTED_SIDS.pop(request.sid, None)
     if room:
+        print(f"[NETWORK] SOCKET_DISCONNECTED: Client left {room}")
+        db_log_event("NETWORK", f"SOCKET_DISCONNECTED: {room}")
         if room == 'grid': S.grid_connected = False
         elif room == 'home': S.home_connected = False
         elif room == 'grid_esp': S.grid_esp = False
@@ -449,7 +466,7 @@ def on_ping_lat():
     emit('pong_latency')
 
 @socketio.on('request_electricity')
-def on_socket_req_elec():
+def on_socket_req_elec(data=None):
     S.pending = True
     S.req_source = "Home Node"
     otp = S.gen_otp()
@@ -518,11 +535,15 @@ def on_socket_update_limits(data):
 
 @socketio.on('esp_telemetry')
 def on_telem(d):
+    print("[NETWORK] HEARTBEAT_RECEIVED: Home ESP32")
     S.last_heartbeat = time.time()
+    DEVICE_REGISTRY['home_esp']['last_seen'] = time.time()
+    DEVICE_REGISTRY['home_esp']['status'] = 'ONLINE'
     if not S.home_esp:
         S.home_esp = True
         S.home_connected = True
-        db_log_event("SYSTEM", "ESP32 Device Online (Heartbeat Restored)")
+        print("[NETWORK] DEVICE_RECONNECTED: Home ESP32")
+        db_log_event("NETWORK", "DEVICE_RECONNECTED: Home ESP32")
         broadcast_state()
 
     S.voltage = float(d.get('voltage', S.voltage))
@@ -541,6 +562,10 @@ def on_telem(d):
         'current': round(S.current, 2),
         'wattage': round(S.wattage, 0),
         'frequency': round(S.freq, 2),
+        'power_factor': round(S.power_factor, 2),
+        'temperature': round(S.temperature, 1),
+        'rssi': S.esp_rssi,
+        'uptime': S.esp_uptime,
         'ts': time.time()
     }
     if S.tx_active:
@@ -587,7 +612,9 @@ def watchdog_loop():
                 S.home_esp = False
                 S.home_connected = False
                 S.last_heartbeat = None
-                db_log_event("SYSTEM", "CRITICAL: ESP32 Device Offline (Heartbeat Lost)")
+                DEVICE_REGISTRY['home_esp']['status'] = 'OFFLINE'
+                print("[NETWORK] DEVICE_OFFLINE: Home ESP32")
+                db_log_event("NETWORK", "DEVICE_OFFLINE: Home ESP32")
                 if S.tx_active:
                     S.stop_tx("Heartbeat Lost")
                     socketio.emit('transmission_halted', {'reason': 'Hardware Disconnect'}, room='grid')
@@ -627,61 +654,109 @@ def api_esp_heartbeat():
 
 # ═══ ESP32 AUTO-DISCOVERY POLLER ═══
 ESP32_GRID_IP = '192.168.81.98'
+ESP32_HOME_IP = '192.168.81.19'
 ESP32_POLL_INTERVAL = 3  # seconds
+
+DEVICE_REGISTRY = {
+    'server': {'ip': SERVER_IP, 'status': 'ONLINE', 'last_seen': time.time(), 'type': 'Laptop Server'},
+    'grid_esp': {'ip': ESP32_GRID_IP, 'status': 'OFFLINE', 'last_seen': 0, 'type': 'Grid ESP32', 'latency': -1},
+    'home_esp': {'ip': ESP32_HOME_IP, 'status': 'OFFLINE', 'last_seen': 0, 'type': 'Home ESP32', 'latency': -1}
+}
+
+@app.route('/api/network-status')
+def api_network_status():
+    return jsonify(DEVICE_REGISTRY)
 
 def esp32_poller():
     """Background thread that pings ESP32 to check if it's alive on the network"""
-    import subprocess, socket
-    consecutive_fails = 0
-    was_online = False
-    while True:
-        time.sleep(ESP32_POLL_INTERVAL)
-        alive = False
+    import subprocess
+    
+    # Log startup detections
+    print(f"[NETWORK] SERVER_IP_DETECTED: {SERVER_IP}")
+    db_log_event("NETWORK", f"SERVER_IP_DETECTED: {SERVER_IP}")
+    
+    grid_fails = 0
+    home_fails = 0
+    
+    def check_ip(ip):
+        start = time.time()
         try:
-            # Method 1: Subprocess ping (works on Windows)
             result = subprocess.run(
-                ['ping', '-n', '1', '-w', '1500', ESP32_GRID_IP],
+                ['ping', '-n', '1', '-w', '1500', ip],
                 capture_output=True, text=True, timeout=3
             )
             if 'TTL=' in result.stdout.upper():
-                alive = True
+                return True, int((time.time() - start)*1000)
         except:
             pass
         
-        if not alive:
-            # Method 2: Try raw socket connection on common ESP32 ports
-            for port in [80, 81, 8080]:
-                try:
-                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    s.settimeout(1.5)
-                    s.connect((ESP32_GRID_IP, port))
-                    s.close()
-                    alive = True
-                    break
-                except:
-                    pass
+        for port in [80, 81, 8080]:
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.settimeout(1.5)
+                s.connect((ip, port))
+                s.close()
+                return True, int((time.time() - start)*1000)
+            except:
+                pass
+        return False, -1
+
+    while True:
+        time.sleep(ESP32_POLL_INTERVAL)
         
-        if alive:
-            consecutive_fails = 0
+        # Check Grid
+        grid_alive, grid_lat = check_ip(ESP32_GRID_IP)
+        if grid_alive:
+            grid_fails = 0
+            DEVICE_REGISTRY['grid_esp']['status'] = 'ONLINE'
+            DEVICE_REGISTRY['grid_esp']['last_seen'] = time.time()
+            DEVICE_REGISTRY['grid_esp']['latency'] = grid_lat
             if not S.grid_esp:
                 S.grid_esp = True
-                print(f"[ESP32 POLLER] ✓ Grid ESP32 detected at {ESP32_GRID_IP}!")
-                db_log_event("ESP_CONNECT", f"Grid ESP32 detected at {ESP32_GRID_IP}")
+                print(f"[NETWORK] GRID_DEVICE_FOUND: {ESP32_GRID_IP} (Lat: {grid_lat}ms)")
+                db_log_event("NETWORK", f"GRID_DEVICE_FOUND: {ESP32_GRID_IP}")
                 broadcast_state()
-            elif not was_online:
-                broadcast_state()
-            was_online = True
         else:
-            consecutive_fails += 1
-            if consecutive_fails >= 3 and S.grid_esp:
-                print(f"[ESP32 POLLER] ✗ Grid ESP32 at {ESP32_GRID_IP} unreachable. Marking offline.")
+            grid_fails += 1
+            if grid_fails >= 3 and S.grid_esp:
+                print(f"[NETWORK] DEVICE_OFFLINE: Grid ESP32 unreachable.")
+                db_log_event("NETWORK", "DEVICE_OFFLINE: Grid ESP32")
                 S.grid_esp = False
-                was_online = False
+                DEVICE_REGISTRY['grid_esp']['status'] = 'OFFLINE'
                 if S.tx_active:
                     S.stop_tx("ESP Unreachable")
                     socketio.emit('transmission_halted', {'reason': 'ESP32 Unreachable'}, room='grid')
                     socketio.emit('transmission_stop', {}, room='home')
                 broadcast_state()
+                
+        # Check Home
+        home_alive, home_lat = check_ip(ESP32_HOME_IP)
+        if home_alive:
+            home_fails = 0
+            DEVICE_REGISTRY['home_esp']['status'] = 'ONLINE'
+            DEVICE_REGISTRY['home_esp']['last_seen'] = time.time()
+            DEVICE_REGISTRY['home_esp']['latency'] = home_lat
+            if not S.home_esp:
+                S.home_esp = True
+                S.home_connected = True
+                print(f"[NETWORK] HOME_DEVICE_FOUND: {ESP32_HOME_IP} (Lat: {home_lat}ms)")
+                db_log_event("NETWORK", f"HOME_DEVICE_FOUND: {ESP32_HOME_IP}")
+                broadcast_state()
+        else:
+            home_fails += 1
+            if home_fails >= 3 and S.home_esp:
+                print(f"[NETWORK] DEVICE_OFFLINE: Home ESP32 unreachable.")
+                db_log_event("NETWORK", "DEVICE_OFFLINE: Home ESP32")
+                S.home_esp = False
+                S.home_connected = False
+                DEVICE_REGISTRY['home_esp']['status'] = 'OFFLINE'
+                if S.tx_active:
+                    S.stop_tx("Home ESP Unreachable")
+                    socketio.emit('transmission_halted', {'reason': 'Home ESP32 Unreachable'}, room='grid')
+                    socketio.emit('transmission_stop', {}, room='home')
+                broadcast_state()
+                
+        DEVICE_REGISTRY['server']['last_seen'] = time.time()
 
 if __name__ == '__main__':
     threading.Thread(target=watchdog_loop, daemon=True).start()
@@ -689,10 +764,11 @@ if __name__ == '__main__':
     print("\n" + "=" * 60)
     print("  WET MASTER SERVER v3.0 | Aditya Raj & Deepak Kumar Gupta")
     print("=" * 60)
-    print(f"  Grid: http://localhost:5000/grid")
-    print(f"  Home: http://localhost:5000/home")
+    print(f"  Server Detected IP: {SERVER_IP}")
+    print(f"  Grid: http://{SERVER_IP}:5000/grid")
+    print(f"  Home: http://{SERVER_IP}:5000/home")
     print(f"  ESP32 Grid Target: {ESP32_GRID_IP}")
+    print(f"  ESP32 Home Target: {ESP32_HOME_IP}")
     print("=" * 60 + "\n")
-    # Production Watchdog handles timeouts instead of simulations
     threading.Thread(target=esp32_poller, daemon=True).start()
     socketio.run(app, host='0.0.0.0', port=5000, debug=False, allow_unsafe_werkzeug=True)

@@ -70,9 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
         switchView('view-transmission');
         fetchTxHistory();
       } else if(text.includes('LIVE MONITORING')) {
-        switchView('view-dashboard');
-        const metrics = document.querySelector('.metrics-row');
-        if(metrics) metrics.scrollIntoView({behavior: 'smooth', block: 'start'});
+        switchView('view-monitoring');
+        initLiveChart();
       } else if(text.includes('USAGE')) {
         switchView('view-usage');
         fetchUsage();
@@ -103,32 +102,71 @@ document.addEventListener('DOMContentLoaded', () => {
       let hrs = Math.floor(s / 3600);
       let mins = Math.floor((s % 3600) / 60);
       let secs = Math.floor(s % 60);
-      txElapsed.textContent = `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+      let timeStr = `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+      if(txElapsed) txElapsed.textContent = timeStr;
+      const pageTxElapsed = document.getElementById('page-tx-elapsed');
+      if(pageTxElapsed) pageTxElapsed.textContent = timeStr;
+      const liveElapsedTime = document.getElementById('live-elapsed-time');
+      if(liveElapsedTime) liveElapsedTime.textContent = timeStr;
     }
   }
   setInterval(updateClock, 1000);
   updateClock();
 
   // --- Socket.IO Connection ---
-  const socket = io('/home');
+  const serverUrl = window.location.origin;
+  const socket = io(serverUrl);
 
   socket.on('connect', () => {
+    socket.emit('join', { room: 'home' });
     console.log("Connected to Grid Socket");
-    if(elHomeConn) elHomeConn.innerHTML = '<span class="dot green"></span> CONNECTED';
+    const topSoftware = document.getElementById('top-software-status');
+    if(topSoftware) {
+      topSoftware.innerHTML = '<span class="dot green"></span> ONLINE';
+      topSoftware.className = 'value text-green';
+    }
   });
 
   socket.on('disconnect', () => {
-    if(elHomeConn) elHomeConn.innerHTML = '<span class="dot red"></span> OFFLINE';
+    const topSoftware = document.getElementById('top-software-status');
+    if(topSoftware) {
+      topSoftware.innerHTML = '<span class="dot red"></span> OFFLINE';
+      topSoftware.className = 'value text-red';
+    }
   });
 
   socket.on('state_sync', (state) => {
-    if(elGridConn) {
-      if(state.grid.connected) {
-        elGridConn.innerHTML = 'EXCELLENT <span class="bars"><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span></span>';
-        elGridConn.className = 'value text-green';
+    const topSoftware = document.getElementById('top-software-status');
+    const topHardware = document.getElementById('top-hardware-status');
+    const topGrid = document.getElementById('top-grid-status');
+
+    if(topSoftware) {
+      if(state.home.connected) {
+        topSoftware.innerHTML = '<span class="dot green"></span> ONLINE';
+        topSoftware.className = 'value text-green';
       } else {
-        elGridConn.innerHTML = 'OFFLINE <span class="bars"><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span></span>';
-        elGridConn.className = 'value text-red';
+        topSoftware.innerHTML = '<span class="dot red"></span> OFFLINE';
+        topSoftware.className = 'value text-red';
+      }
+    }
+
+    if(topHardware) {
+      if(state.home.esp) {
+        topHardware.innerHTML = '<span class="dot green"></span> ONLINE';
+        topHardware.className = 'value text-green';
+      } else {
+        topHardware.innerHTML = '<span class="dot red"></span> OFFLINE';
+        topHardware.className = 'value text-red';
+      }
+    }
+
+    if(topGrid) {
+      if(state.grid.connected) {
+        topGrid.innerHTML = 'ONLINE <span class="bars"><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span><span class="bar on"></span></span>';
+        topGrid.className = 'value text-green';
+      } else {
+        topGrid.innerHTML = 'OFFLINE <span class="bars"><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span></span>';
+        topGrid.className = 'value text-red';
       }
     }
 
@@ -209,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   socket.on('otp_broadcast', (data) => {
+    console.log("BACKEND ACK RECEIVED");
     if(modalOtp) {
       modalOtp.style.display = 'flex';
       inputOtp.value = '';
@@ -315,7 +354,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Initial Fetch for Sidebar
   fetchWallet();
-});
 
   // --- Request Page Logic ---
   const powerSlider = document.getElementById('power-slider');
@@ -346,6 +384,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnInitiate = document.getElementById('btn-initiate-tx');
   if(btnInitiate) {
       btnInitiate.addEventListener('click', () => {
+          console.log("BUTTON CLICKED");
+          console.log("SOCKET AVAILABLE", !!socket);
           // Switch to dashboard to show OTP and timeline
           switchView('view-dashboard');
           window.scrollTo({top:0, behavior:'smooth'});
@@ -354,6 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
               power: powerSlider.value,
               duration: durationSlider.value
           });
+          console.log("REQUEST SENT");
           
           if(txTimeReq) txTimeReq.textContent = new Date().toLocaleTimeString('en-US', {hour12:false});
           const steps = document.querySelectorAll('.transmission-workflow .step');
@@ -475,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
   originalSocketOn('insufficient_funds', (data) => window.addLog(`Insufficient funds. Need ₹${data.required}.`, 'error'));
 
   window.fetchTxHistory = function() {
-      fetch('http://localhost:5000/api/history')
+      fetch('/api/history')
         .then(r => r.json())
         .then(data => {
             const body = document.getElementById('tx-history-body');
@@ -615,7 +656,7 @@ socket.on('telemetry_update', (t) => {
 
 // Periodic API Fetchers for History
 function fetchTimeline() {
-    fetch('http://localhost:5000/api/timeline')
+    fetch('/api/timeline')
         .then(r => r.json())
         .then(data => {
             if(DOM.timeline && data.length > 0) {
@@ -643,7 +684,7 @@ function fetchTimeline() {
 }
 
 function fetchWallet() {
-    fetch('http://localhost:5000/api/wallet')
+    fetch('/api/wallet')
         .then(r => r.json())
         .then(data => {
             let formattedBal = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(data.balance);
@@ -674,3 +715,73 @@ setTimeout(() => {
     setInterval(fetchTimeline, 5000);
     setInterval(fetchWallet, 10000);
 }, 1000);
+
+// Live Power Chart Logic
+let liveChartData = Array(30).fill(567);
+let chartInterval;
+function initLiveChart() {
+    const canvas = document.getElementById('live-power-chart');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    if(chartInterval) clearInterval(chartInterval);
+    
+    function drawChart() {
+        // Update data
+        let lastVal = liveChartData[liveChartData.length - 1];
+        let newVal = lastVal + (Math.random() * 40 - 20); // +/- 20W variation
+        if(newVal > 890) newVal = 890;
+        if(newVal < 200) newVal = 200;
+        liveChartData.push(newVal);
+        liveChartData.shift();
+        
+        // Update UI
+        const currEl = document.getElementById('lm-current-power');
+        if(currEl) currEl.textContent = Math.round(newVal) + 'W';
+        
+        // Draw
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Grid
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.beginPath();
+        for(let i=0; i<4; i++) {
+            let y = i * (canvas.height / 4);
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+        }
+        ctx.stroke();
+        
+        // Line
+        ctx.beginPath();
+        ctx.strokeStyle = '#00e5ff';
+        ctx.lineWidth = 2;
+        
+        let stepX = canvas.width / (liveChartData.length - 1);
+        for(let i=0; i<liveChartData.length; i++) {
+            let x = i * stepX;
+            // scale 0-1200
+            let y = canvas.height - ((liveChartData[i] / 1200) * canvas.height);
+            if(i===0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        
+        // Fill
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(0, canvas.height);
+        let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        grad.addColorStop(0, 'rgba(0, 229, 255, 0.2)');
+        grad.addColorStop(1, 'rgba(0, 229, 255, 0)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+    }
+    
+    chartInterval = setInterval(drawChart, 2000);
+    drawChart();
+}
+
+});
