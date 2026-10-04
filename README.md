@@ -7,6 +7,12 @@ WETA is a high-fidelity, real-time control system for a **Wireless Electricity T
 
 The system operates in **Full Production Mode**. All hardware simulations have been stripped out. The backend strictly relies on live hardware telemetry, heartbeat watchdogs, and true relay states.
 
+<img width="720" height="1280" alt="image" src="https://github.com/user-attachments/assets/dd5996cb-db4c-4928-a2f2-80da5d6c8e8b" />
+<img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/fca70419-fa69-4aa8-aa8a-e2c4fb4d2dcc" />
+<img width="720" height="1280" alt="image" src="https://github.com/user-attachments/assets/6d613df4-5c6b-4cd6-9eab-1d1061ef8fa0" />
+
+
+
 ---
 
 ## 🏗️ System Architecture
